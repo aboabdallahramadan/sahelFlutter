@@ -1,0 +1,151 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/models/category.dart';
+
+final categoriesProvider = Provider<List<Category>>((ref) {
+  return [
+    const Category(
+      id: 'real-estate',
+      nameKey: 'categoriesRealEstate',
+      icon: '🏠',
+      color: '#3B82F6',
+      subcategoryKeys: [
+        'propertiesForRent',
+        'lands',
+        'propertiesForSale',
+        'furniture',
+      ],
+    ),
+    const Category(
+      id: 'vehicles',
+      nameKey: 'categoriesVehicles',
+      icon: '🚗',
+      color: '#EF4444',
+      subcategoryKeys: [
+        'cars',
+        'carShowrooms',
+        'motorcycles',
+        'carRentals',
+        'offshoreTools',
+        'spareParts',
+        'heavyEquipment',
+        'mzadYard',
+      ],
+    ),
+    const Category(
+      id: 'services',
+      nameKey: 'categoriesServices',
+      icon: '🛠️',
+      color: '#10B981',
+      subcategoryKeys: [
+        'pestControl',
+        'airConditioner',
+        'cleaningServices',
+        'occasions',
+        'construction',
+        'furnitureMoving',
+        'transportServices',
+        'decorDesign',
+        'landscaping',
+        'education',
+        'sellingProjects',
+        'businessServices',
+        'maintenanceServices',
+      ],
+    ),
+    const Category(
+      id: 'family-needs',
+      nameKey: 'categoriesFamilyNeeds',
+      icon: '👨‍👩‍👧‍👦',
+      color: '#F59E0B',
+      subcategoryKeys: [
+        'menFashion',
+        'womenFashion',
+        'kidsProducts',
+        'gifts',
+        'food',
+      ],
+    ),
+    const Category(
+      id: 'jobs',
+      nameKey: 'categoriesJobs',
+      icon: '💼',
+      color: '#8B5CF6',
+      subcategoryKeys: [
+        'jobVacancies',
+        'jobSeekers',
+        'freelancers',
+      ],
+    ),
+    const Category(
+      id: 'electronics',
+      nameKey: 'categoriesElectronics',
+      icon: '💻',
+      color: '#EC4899',
+      subcategoryKeys: [
+        'mobiles',
+        'electronics',
+        'homeAppliances',
+        'cameras',
+        'electronicGames',
+      ],
+    ),
+    const Category(
+      id: 'sport',
+      nameKey: 'categoriesSport',
+      icon: '⚽',
+      color: '#06B6D4',
+      subcategoryKeys: [
+        'health',
+        'sports',
+        'scooter',
+      ],
+    ),
+    const Category(
+      id: 'travel',
+      nameKey: 'categoriesTravel',
+      icon: '✈️',
+      color: '#84CC16',
+      subcategoryKeys: [
+        'tourism',
+        'trips',
+      ],
+    ),
+    const Category(
+      id: 'numbers',
+      nameKey: 'categoriesNumbers',
+      icon: '🔢',
+      color: '#F97316',
+      subcategoryKeys: [
+        'mobileNumbers',
+        'mobileNumbersAuction',
+        'carPlates',
+        'carPlatesAuction',
+      ],
+    ),
+    const Category(
+      id: 'animals',
+      nameKey: 'categoriesAnimals',
+      icon: '🐴',
+      color: '#14B8A6',
+      subcategoryKeys: [
+        'horses',
+        'camelAuctions',
+        'birds',
+        'otherAnimals',
+      ],
+    ),
+    const Category(
+      id: 'others',
+      nameKey: 'categoriesOthers',
+      icon: '📦',
+      color: '#6B7280',
+      subcategoryKeys: [
+        'specialCoins',
+        'antiques',
+        'charity',
+        'others',
+        'inquires',
+      ],
+    ),
+  ];
+}); 
