@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 // Import screens here - we'll create them later
+import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/categories/presentation/screens/categories_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
@@ -22,9 +23,16 @@ import '../../features/static/presentation/screens/contact_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/splash',
     debugLogDiagnostics: true,
     routes: [
+      // Splash Screen
+      GoRoute(
+        path: '/splash',
+        name: 'splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
+
       // Home
       GoRoute(
         path: '/',
@@ -37,7 +45,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             name: 'categories',
             builder: (context, state) => const CategoriesScreen(),
           ),
-          
+
           // Subcategory listing
           GoRoute(
             path: 'category/:subcategoryId',
@@ -47,7 +55,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               return SubcategoryScreen(subcategoryId: subcategoryId);
             },
           ),
-          
+
           // Ad Details
           GoRoute(
             path: 'ad/:adId',
@@ -57,14 +65,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               return AdDetailsScreen(adId: adId);
             },
           ),
-          
+
           // Post Ad
           GoRoute(
             path: 'post-ad',
             name: 'postAd',
             builder: (context, state) => const PostAdScreen(),
           ),
-          
+
           // Chats
           GoRoute(
             path: 'chats',
@@ -82,7 +90,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          
+
           // Profile
           GoRoute(
             path: 'profile',
@@ -100,34 +108,34 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          
+
           // Favorites
           GoRoute(
             path: 'favorites',
             name: 'favorites',
             builder: (context, state) => const FavoritesScreen(),
           ),
-          
+
           // Notifications
           GoRoute(
             path: 'notifications',
             name: 'notifications',
             builder: (context, state) => const NotificationsScreen(),
           ),
-          
+
           // Auth Routes
           GoRoute(
             path: 'login',
             name: 'login',
             builder: (context, state) => const LoginScreen(),
           ),
-          
+
           GoRoute(
             path: 'register',
             name: 'register',
             builder: (context, state) => const RegisterScreen(),
           ),
-          
+
           GoRoute(
             path: 'otp',
             name: 'otp',
@@ -137,20 +145,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               return OtpScreen(phone: phone, type: type);
             },
           ),
-          
+
           // Static Pages
           GoRoute(
             path: 'terms',
             name: 'terms',
             builder: (context, state) => const TermsScreen(),
           ),
-          
+
           GoRoute(
             path: 'privacy',
             name: 'privacy',
             builder: (context, state) => const PrivacyScreen(),
           ),
-          
+
           GoRoute(
             path: 'contact',
             name: 'contact',
@@ -166,4 +174,4 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 // final authGuardProvider = Provider<Listenable>((ref) {
 //   final authState = ref.watch(authStateProvider);
 //   return authState;
-// }); 
+// });

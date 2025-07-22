@@ -6,20 +6,20 @@ import 'l10n/app_localizations.dart';
 import 'shared/themes/app_theme.dart';
 import 'shared/routes/app_router.dart';
 
-class MzadQatarApp extends ConsumerWidget {
-  const MzadQatarApp({super.key});
+class SahelApp extends ConsumerWidget {
+  const SahelApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
-    
+
     return ScreenUtilInit(
       designSize: const Size(375, 812), // iPhone X design size
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp.router(
-          title: 'Mzad Qatar',
+          title: 'Sahel',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
@@ -40,4 +40,4 @@ class MzadQatarApp extends ConsumerWidget {
       },
     );
   }
-} 
+}

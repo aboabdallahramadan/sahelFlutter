@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../core/constants/app_colors.dart';
@@ -17,17 +18,20 @@ class _BannerCarouselState extends State<BannerCarousel> {
 
   final List<Map<String, String>> banners = [
     {
-      'image': 'https://images.unsplash.com/photo-1605629921711-2f6b00c6bbf4?w=1920&h=600&fit=crop',
+      'image':
+          'https://images.unsplash.com/photo-1605629921711-2f6b00c6bbf4?w=1920&h=600&fit=crop',
       'title': 'Welcome to Sahal',
       'subtitle': 'Find amazing deals in Qatar',
     },
     {
-      'image': 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&h=600&fit=crop',
+      'image':
+          'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&h=600&fit=crop',
       'title': 'Sell Anything',
       'subtitle': 'Post your ad in minutes',
     },
     {
-      'image': 'https://images.unsplash.com/photo-1567189022630-7907afc46c31?w=1920&h=600&fit=crop',
+      'image':
+          'https://images.unsplash.com/photo-1567189022630-7907afc46c31?w=1920&h=600&fit=crop',
       'title': 'Safe & Secure',
       'subtitle': 'Buy and sell with confidence',
     },
@@ -43,7 +47,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
               items: banners.map((banner) => _buildBannerItem(banner)).toList(),
               carouselController: _controller,
               options: CarouselOptions(
-                height: 200,
+                height: 200.h,
                 viewportFraction: 1.0,
                 autoPlay: true,
                 autoPlayInterval: const Duration(seconds: 5),
@@ -57,7 +61,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
               ),
             ),
             Positioned(
-              bottom: 20,
+              bottom: 20.h,
               left: 0,
               right: 0,
               child: Row(
@@ -66,11 +70,11 @@ class _BannerCarouselState extends State<BannerCarousel> {
                   return GestureDetector(
                     onTap: () => _controller.animateToPage(entry.key),
                     child: Container(
-                      width: _currentIndex == entry.key ? 24.0 : 8.0,
-                      height: 8.0,
-                      margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                      width: _currentIndex == entry.key ? 24.w : 8.w,
+                      height: 8.h,
+                      margin: EdgeInsets.symmetric(horizontal: 4.w),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4.0),
+                        borderRadius: BorderRadius.circular(4.r),
                         color: _currentIndex == entry.key
                             ? AppColors.textWhite
                             : AppColors.textWhite.withOpacity(0.4),
@@ -93,7 +97,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
           imageUrl: banner['image']!,
           fit: BoxFit.cover,
           width: double.infinity,
-          height: 200,
+          height: 200.h,
           placeholder: (context, url) => Container(
             color: AppColors.backgroundGray,
             child: const Center(
@@ -104,9 +108,10 @@ class _BannerCarouselState extends State<BannerCarousel> {
           ),
           errorWidget: (context, url, error) => Container(
             color: AppColors.backgroundGray,
-            child: const Icon(
+            child: Icon(
               Icons.error,
               color: AppColors.textTertiary,
+              size: AppConstants.iconSizeLarge,
             ),
           ),
         ),
@@ -123,25 +128,27 @@ class _BannerCarouselState extends State<BannerCarousel> {
           ),
         ),
         Positioned(
-          bottom: 30,
-          left: 20,
-          right: 20,
+          bottom: 30.h,
+          left: 20.w,
+          right: 20.w,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 banner['title']!,
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  color: AppColors.textWhite,
-                  fontWeight: FontWeight.bold,
-                ),
+                      color: AppColors.textWhite,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24.sp,
+                    ),
               ),
-              const SizedBox(height: AppConstants.spacing8),
+              SizedBox(height: AppConstants.spacing8),
               Text(
                 banner['subtitle']!,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColors.textWhite,
-                ),
+                      color: AppColors.textWhite,
+                      fontSize: 16.sp,
+                    ),
               ),
             ],
           ),
@@ -149,4 +156,4 @@ class _BannerCarouselState extends State<BannerCarousel> {
       ],
     );
   }
-} 
+}

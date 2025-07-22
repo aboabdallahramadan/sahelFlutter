@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
@@ -22,7 +23,7 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final categoryColor = _getColorFromHex(category.color);
-    
+
     // Get localized name
     String localizedName = '';
     switch (category.nameKey) {
@@ -76,13 +77,13 @@ class CategoryCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
           border: Border.all(
             color: AppColors.borderLight,
-            width: 1,
+            width: 1.w,
           ),
           boxShadow: [
             BoxShadow(
               color: AppColors.shadowLight,
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+              blurRadius: 4.r,
+              offset: Offset(0, 2.h),
             ),
           ],
         ),
@@ -91,8 +92,8 @@ class CategoryCard extends StatelessWidget {
           children: [
             // Icon Container
             Container(
-              width: 56,
-              height: 56,
+              width: 56.w,
+              height: 56.h,
               decoration: BoxDecoration(
                 color: categoryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
@@ -100,22 +101,23 @@ class CategoryCard extends StatelessWidget {
               child: Center(
                 child: Text(
                   category.icon,
-                  style: const TextStyle(fontSize: 28),
+                  style: TextStyle(fontSize: 28.sp),
                 ),
               ),
             ),
-            const SizedBox(height: AppConstants.spacing8),
-            
+            SizedBox(height: AppConstants.spacing8),
+
             // Category Name
             Padding(
-              padding: const EdgeInsets.symmetric(
+              padding: EdgeInsets.symmetric(
                 horizontal: AppConstants.spacing8,
               ),
               child: Text(
                 localizedName,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13.sp,
+                    ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -126,4 +128,4 @@ class CategoryCard extends StatelessWidget {
       ),
     );
   }
-} 
+}
