@@ -28,7 +28,7 @@ class AdsSection extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Latest Ads',
+                l10n.commonLatestAds,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 20.sp,
@@ -39,7 +39,7 @@ class AdsSection extends ConsumerWidget {
                   context.goNamed('categories');
                 },
                 child: Text(
-                  'View All',
+                  l10n.commonViewAll,
                   style: TextStyle(fontSize: 14.sp),
                 ),
               ),
@@ -53,7 +53,8 @@ class AdsSection extends ConsumerWidget {
               crossAxisCount: 2,
               crossAxisSpacing: AppConstants.spacing12R,
               mainAxisSpacing: AppConstants.spacing12R,
-              childAspectRatio: 0.75, // Adjusted for fixed image height
+              childAspectRatio:
+                  0.85, // Increased for more height to fit content properly
             ),
             itemCount: ads.length,
             itemBuilder: (context, index) {

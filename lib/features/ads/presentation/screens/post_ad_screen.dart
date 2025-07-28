@@ -22,7 +22,7 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
   final _locationController = TextEditingController();
-  
+
   Category? _selectedCategory;
   final List<File> _images = [];
   final ImagePicker _picker = ImagePicker();
@@ -91,14 +91,14 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
           setState(() {
             _isLoading = false;
           });
-          
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Ad posted successfully!'),
               backgroundColor: AppColors.success,
             ),
           );
-          
+
           context.go('/');
         }
       });
@@ -165,23 +165,24 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                     Text(
                       'Photos',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     const SizedBox(height: AppConstants.spacing8),
                     Text(
                       'Add up to 10 photos',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                            color: AppColors.textSecondary,
+                          ),
                     ),
                     const SizedBox(height: AppConstants.spacing16),
-                    
+
                     // Image Grid
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         crossAxisSpacing: AppConstants.spacing8,
                         mainAxisSpacing: AppConstants.spacing8,
@@ -194,7 +195,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                             child: Container(
                               decoration: BoxDecoration(
                                 color: AppColors.backgroundGray,
-                                borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                                borderRadius: BorderRadius.circular(
+                                    AppConstants.radiusMedium),
                                 border: Border.all(
                                   color: AppColors.borderLight,
                                   style: BorderStyle.solid,
@@ -212,21 +214,25 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                                   const SizedBox(height: AppConstants.spacing4),
                                   Text(
                                     'Add Photo',
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: AppColors.textSecondary,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: AppColors.textSecondary,
+                                        ),
                                   ),
                                 ],
                               ),
                             ),
                           );
                         }
-                        
+
                         return Stack(
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                                borderRadius: BorderRadius.circular(
+                                    AppConstants.radiusMedium),
                                 image: DecorationImage(
                                   image: FileImage(_images[index]),
                                   fit: BoxFit.cover,
@@ -263,7 +269,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: AppColors.primaryAccent,
-                                    borderRadius: BorderRadius.circular(AppConstants.radiusSmall),
+                                    borderRadius: BorderRadius.circular(
+                                        AppConstants.radiusSmall),
                                   ),
                                   child: const Text(
                                     'Main',
@@ -283,7 +290,7 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                 ),
               ),
               const SizedBox(height: AppConstants.spacing8),
-              
+
               // Ad Details Section
               Container(
                 color: AppColors.backgroundWhite,
@@ -294,11 +301,11 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                     Text(
                       'Ad Details',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     const SizedBox(height: AppConstants.spacing16),
-                    
+
                     // Category Dropdown
                     DropdownButtonFormField<Category>(
                       value: _selectedCategory,
@@ -307,14 +314,15 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                         filled: true,
                         fillColor: AppColors.backgroundGray,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
+                          borderRadius:
+                              BorderRadius.circular(AppConstants.radiusLarge),
                           borderSide: BorderSide.none,
                         ),
                       ),
                       items: categories.map((category) {
                         return DropdownMenuItem(
                           value: category,
-                          child: Text(_getCategoryName(l10n, category.nameKey)),
+                          child: Text(category.title),
                         );
                       }).toList(),
                       onChanged: (value) {
@@ -330,7 +338,7 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                       },
                     ),
                     const SizedBox(height: AppConstants.spacing16),
-                    
+
                     // Title
                     TextFormField(
                       controller: _titleController,
@@ -339,7 +347,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                         filled: true,
                         fillColor: AppColors.backgroundGray,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
+                          borderRadius:
+                              BorderRadius.circular(AppConstants.radiusLarge),
                           borderSide: BorderSide.none,
                         ),
                       ),
@@ -354,7 +363,7 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                       },
                     ),
                     const SizedBox(height: AppConstants.spacing16),
-                    
+
                     // Price
                     TextFormField(
                       controller: _priceController,
@@ -364,7 +373,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                         filled: true,
                         fillColor: AppColors.backgroundGray,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
+                          borderRadius:
+                              BorderRadius.circular(AppConstants.radiusLarge),
                           borderSide: BorderSide.none,
                         ),
                       ),
@@ -379,7 +389,7 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                       },
                     ),
                     const SizedBox(height: AppConstants.spacing16),
-                    
+
                     // Location
                     TextFormField(
                       controller: _locationController,
@@ -388,7 +398,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                         filled: true,
                         fillColor: AppColors.backgroundGray,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
+                          borderRadius:
+                              BorderRadius.circular(AppConstants.radiusLarge),
                           borderSide: BorderSide.none,
                         ),
                         suffixIcon: const Icon(Icons.location_on_outlined),
@@ -401,7 +412,7 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                       },
                     ),
                     const SizedBox(height: AppConstants.spacing16),
-                    
+
                     // Description
                     TextFormField(
                       controller: _descriptionController,
@@ -412,7 +423,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                         filled: true,
                         fillColor: AppColors.backgroundGray,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
+                          borderRadius:
+                              BorderRadius.circular(AppConstants.radiusLarge),
                           borderSide: BorderSide.none,
                         ),
                       ),
@@ -430,10 +442,11 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                 ),
               ),
               const SizedBox(height: AppConstants.spacing24),
-              
+
               // Submit Button
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppConstants.spacing16),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppConstants.spacing16),
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _submitAd,
                   style: ElevatedButton.styleFrom(
@@ -442,7 +455,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                       vertical: AppConstants.spacing16,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
+                      borderRadius:
+                          BorderRadius.circular(AppConstants.radiusLarge),
                     ),
                   ),
                   child: _isLoading
@@ -472,4 +486,4 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
       ),
     );
   }
-} 
+}

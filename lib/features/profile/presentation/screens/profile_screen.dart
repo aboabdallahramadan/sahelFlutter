@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/locale_provider.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../shared/widgets/language_selection_dialog.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -11,7 +13,7 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Scaffold(
       backgroundColor: AppColors.primaryBg,
       appBar: AppBar(
@@ -43,8 +45,8 @@ class ProfileScreen extends ConsumerWidget {
                   Text(
                     'Guest User',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: AppConstants.spacing8),
                   ElevatedButton.icon(
@@ -61,7 +63,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppConstants.spacing8),
-            
+
             // Menu Items
             Container(
               color: AppColors.backgroundWhite,
@@ -97,7 +99,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppConstants.spacing8),
-            
+
             // Settings Section
             Container(
               color: AppColors.backgroundWhite,
@@ -109,25 +111,34 @@ class ProfileScreen extends ConsumerWidget {
                     child: Text(
                       l10n.profileSettings,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textSecondary,
-                      ),
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textSecondary,
+                          ),
                     ),
                   ),
                   _buildMenuItem(
                     context: context,
                     icon: Icons.language,
                     title: l10n.profileChangeLanguage,
-                    trailing: Text(
-                      Localizations.localeOf(context).languageCode == 'en' 
-                          ? 'English' 
-                          : 'العربية',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                    trailing: Consumer(
+                      builder: (context, ref, child) {
+                        final currentLocale = ref.watch(localeProvider);
+                        return Text(
+                          currentLocale.languageCode == 'en'
+                              ? 'English'
+                              : 'العربية',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
+                        );
+                      },
                     ),
                     onTap: () {
-                      // TODO: Implement language change
+                      showDialog(
+                        context: context,
+                        builder: (context) => const LanguageSelectionDialog(),
+                      );
                     },
                   ),
                   const Divider(height: 1),
@@ -152,7 +163,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppConstants.spacing8),
-            
+
             // Support Section
             Container(
               color: AppColors.backgroundWhite,
@@ -164,9 +175,9 @@ class ProfileScreen extends ConsumerWidget {
                     child: Text(
                       l10n.footerSupport,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textSecondary,
-                      ),
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textSecondary,
+                          ),
                     ),
                   ),
                   _buildMenuItem(
@@ -190,13 +201,13 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppConstants.spacing24),
-            
+
             // App Version
             Text(
               'Version ${AppConstants.appVersion}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.textTertiary,
-              ),
+                    color: AppColors.textTertiary,
+                  ),
             ),
             const SizedBox(height: AppConstants.spacing24),
           ],
@@ -233,7 +244,7 @@ class ProfileScreen extends ConsumerWidget {
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ),
-            if (trailing != null) 
+            if (trailing != null)
               trailing
             else
               Icon(
@@ -246,4 +257,4 @@ class ProfileScreen extends ConsumerWidget {
       ),
     );
   }
-} 
+}

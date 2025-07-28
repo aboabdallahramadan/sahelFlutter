@@ -19,21 +19,15 @@ class _BannerCarouselState extends State<BannerCarousel> {
   final List<Map<String, String>> banners = [
     {
       'image':
-          'https://images.unsplash.com/photo-1605629921711-2f6b00c6bbf4?w=1920&h=600&fit=crop',
-      'title': 'Welcome to Sahal',
-      'subtitle': 'Find amazing deals in Qatar',
+          'https://images.unsplash.com/photo-1605629921711-2f6b00c6bbf4?w=1920&h=600&fit=crop'
     },
     {
       'image':
-          'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&h=600&fit=crop',
-      'title': 'Sell Anything',
-      'subtitle': 'Post your ad in minutes',
+          'https://images.unsplash.com/photo-1605629921711-2f6b00c6bbf4?w=1920&h=600&fit=crop'
     },
     {
       'image':
-          'https://images.unsplash.com/photo-1567189022630-7907afc46c31?w=1920&h=600&fit=crop',
-      'title': 'Safe & Secure',
-      'subtitle': 'Buy and sell with confidence',
+          'https://images.unsplash.com/photo-1605629921711-2f6b00c6bbf4?w=1920&h=600&fit=crop'
     },
   ];
 
@@ -113,44 +107,6 @@ class _BannerCarouselState extends State<BannerCarousel> {
               color: AppColors.textTertiary,
               size: AppConstants.iconSizeLarge,
             ),
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Colors.black.withOpacity(0.6),
-              ],
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 30.h,
-          left: 20.w,
-          right: 20.w,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                banner['title']!,
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      color: AppColors.textWhite,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24.sp,
-                    ),
-              ),
-              SizedBox(height: AppConstants.spacing8),
-              Text(
-                banner['subtitle']!,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textWhite,
-                      fontSize: 16.sp,
-                    ),
-              ),
-            ],
           ),
         ),
       ],

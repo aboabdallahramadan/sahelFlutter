@@ -11,8 +11,13 @@ import '../../providers/categories_provider.dart';
 
 class SubcategoryScreen extends ConsumerStatefulWidget {
   final String subcategoryId;
+  final String? categoryId;
 
-  const SubcategoryScreen({super.key, required this.subcategoryId});
+  const SubcategoryScreen({
+    super.key,
+    required this.subcategoryId,
+    this.categoryId,
+  });
 
   @override
   ConsumerState<SubcategoryScreen> createState() => _SubcategoryScreenState();
@@ -57,12 +62,33 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final categories = ref.watch(categoriesProvider);
-    
-    // Find the category by subcategory ID - in real app this would be different
-    final category = categories.firstWhere(
-      (cat) => cat.id == widget.subcategoryId,
-      orElse: () => categories.first,
-    );
+
+    // Determine if we're showing a specific subcategory or category
+    final bool isSubcategoryView = widget.categoryId != null;
+
+    // Find the category and subcategory
+    Category category;
+    SubCategory? subcategory;
+
+    if (isSubcategoryView) {
+      // Find category by categoryId and subcategory by subcategoryId
+      category = categories.firstWhere(
+        (cat) => cat.id == widget.categoryId,
+        orElse: () => categories.first,
+      );
+      subcategory = category.subcategories.firstWhere(
+        (sub) => sub.id == widget.subcategoryId,
+        orElse: () => category.subcategories.isNotEmpty
+            ? category.subcategories.first
+            : const SubCategory(id: '', title: 'Unknown', image: ''),
+      );
+    } else {
+      // Find the category by subcategory ID - for backward compatibility
+      category = categories.firstWhere(
+        (cat) => cat.id == widget.subcategoryId,
+        orElse: () => categories.first,
+      );
+    }
 
     // Mock ads - in real app this would come from a provider
     final ads = _getMockAds();
@@ -70,7 +96,9 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
     return Scaffold(
       backgroundColor: AppColors.primaryBg,
       appBar: AppBar(
-        title: Text(_getCategoryName(l10n, category.nameKey)),
+        title: Text(isSubcategoryView
+            ? subcategory?.title ?? category.title
+            : category.title),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -93,8 +121,8 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                 Text(
                   '${ads.length} ads',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+                        color: AppColors.textSecondary,
+                      ),
                 ),
                 const Spacer(),
                 // Sort Dropdown
@@ -105,7 +133,8 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.backgroundGray,
-                    borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
+                    borderRadius:
+                        BorderRadius.circular(AppConstants.radiusLarge),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
@@ -137,7 +166,7 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
               ],
             ),
           ),
-          
+
           // Ads Grid
           Expanded(
             child: ads.isEmpty
@@ -153,16 +182,18 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                         const SizedBox(height: AppConstants.spacing16),
                         Text(
                           'No ads found',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
                         ),
                         const SizedBox(height: AppConstants.spacing8),
                         Text(
                           'Try adjusting your filters',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textTertiary,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.textTertiary,
+                                  ),
                         ),
                       ],
                     ),
@@ -171,11 +202,13 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                     color: AppColors.backgroundWhite,
                     child: GridView.builder(
                       padding: const EdgeInsets.all(AppConstants.spacing16),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: AppConstants.spacing12,
                         mainAxisSpacing: AppConstants.spacing12,
-                        childAspectRatio: 0.75,
+                        childAspectRatio:
+                            0.85, // Increased for more height to fit content properly
                       ),
                       itemCount: ads.length,
                       itemBuilder: (context, index) {
@@ -232,16 +265,19 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                         ),
                       ),
                       const SizedBox(height: AppConstants.spacing24),
-                      
+
                       // Title
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             'Filters',
-                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                           TextButton(
                             onPressed: () {
@@ -255,7 +291,7 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                         ],
                       ),
                       const SizedBox(height: AppConstants.spacing24),
-                      
+
                       Expanded(
                         child: ListView(
                           controller: scrollController,
@@ -263,9 +299,12 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                             // Location Filter
                             Text(
                               'Location',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                             const SizedBox(height: AppConstants.spacing12),
                             Wrap(
@@ -274,33 +313,40 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                                 _buildFilterChip(
                                   'All Qatar',
                                   _filterLocation == 'all',
-                                  () => setModalState(() => _filterLocation = 'all'),
+                                  () => setModalState(
+                                      () => _filterLocation = 'all'),
                                 ),
                                 _buildFilterChip(
                                   'Doha',
                                   _filterLocation == 'doha',
-                                  () => setModalState(() => _filterLocation = 'doha'),
+                                  () => setModalState(
+                                      () => _filterLocation = 'doha'),
                                 ),
                                 _buildFilterChip(
                                   'Al Rayyan',
                                   _filterLocation == 'rayyan',
-                                  () => setModalState(() => _filterLocation = 'rayyan'),
+                                  () => setModalState(
+                                      () => _filterLocation = 'rayyan'),
                                 ),
                                 _buildFilterChip(
                                   'Al Wakrah',
                                   _filterLocation == 'wakrah',
-                                  () => setModalState(() => _filterLocation = 'wakrah'),
+                                  () => setModalState(
+                                      () => _filterLocation = 'wakrah'),
                                 ),
                               ],
                             ),
                             const SizedBox(height: AppConstants.spacing32),
-                            
+
                             // Price Range
                             Text(
                               'Price Range (QAR)',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                             const SizedBox(height: AppConstants.spacing12),
                             RangeSlider(
@@ -334,7 +380,7 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                           ],
                         ),
                       ),
-                      
+
                       // Apply Button
                       const SizedBox(height: AppConstants.spacing24),
                       ElevatedButton(
@@ -350,7 +396,8 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                             vertical: AppConstants.spacing16,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
+                            borderRadius:
+                                BorderRadius.circular(AppConstants.radiusLarge),
                           ),
                         ),
                         child: const Center(
@@ -390,7 +437,8 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
         id: '1',
         title: 'Toyota Camry 2022',
         price: 85000,
-        image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=400&fit=crop',
+        image:
+            'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=400&fit=crop',
         comments: 3,
         likes: 12,
         location: 'Doha',
@@ -400,7 +448,8 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
         id: '2',
         title: 'Honda Accord 2021',
         price: 75000,
-        image: 'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=400&h=400&fit=crop',
+        image:
+            'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=400&h=400&fit=crop',
         comments: 5,
         likes: 20,
         location: 'Al Rayyan',
@@ -410,7 +459,8 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
         id: '3',
         title: 'Nissan Altima 2023',
         price: 65000,
-        image: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=400&h=400&fit=crop',
+        image:
+            'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=400&h=400&fit=crop',
         comments: 2,
         likes: 8,
         location: 'Al Wakrah',
@@ -418,4 +468,4 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
       ),
     ];
   }
-} 
+}

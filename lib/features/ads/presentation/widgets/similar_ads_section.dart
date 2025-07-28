@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/models/ad_small.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -30,8 +28,8 @@ class SimilarAdsSection extends StatelessWidget {
               Text(
                 l10n.adSimilarAds,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
               TextButton(
                 onPressed: () {
@@ -42,9 +40,8 @@ class SimilarAdsSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppConstants.spacing16),
-          
           SizedBox(
-            height: 280,
+            height: 220, // Reduced height to match the more compact card design
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: ads.length,
@@ -54,7 +51,7 @@ class SimilarAdsSection extends StatelessWidget {
               itemBuilder: (context, index) {
                 final ad = ads[index];
                 return SizedBox(
-                  width: 200,
+                  width: 180, // Reduced width for more compact design
                   child: AdCard(ad: ad),
                 );
               },
@@ -64,4 +61,4 @@ class SimilarAdsSection extends StatelessWidget {
       ),
     );
   }
-} 
+}

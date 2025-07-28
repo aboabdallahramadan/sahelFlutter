@@ -13,7 +13,7 @@ class FavoritesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    
+
     // Mock data - in real app this would come from a provider
     final favoriteAds = _getMockFavorites();
 
@@ -40,15 +40,15 @@ class FavoritesScreen extends ConsumerWidget {
                   Text(
                     'No favorites yet',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                          color: AppColors.textSecondary,
+                        ),
                   ),
                   const SizedBox(height: AppConstants.spacing8),
                   Text(
                     'Start adding ads to your favorites',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textTertiary,
-                    ),
+                          color: AppColors.textTertiary,
+                        ),
                   ),
                   const SizedBox(height: AppConstants.spacing24),
                   ElevatedButton(
@@ -68,7 +68,8 @@ class FavoritesScreen extends ConsumerWidget {
                   crossAxisCount: 2,
                   crossAxisSpacing: AppConstants.spacing12,
                   mainAxisSpacing: AppConstants.spacing12,
-                  childAspectRatio: 0.75,
+                  childAspectRatio:
+                      0.85, // Increased for more height to fit content properly
                 ),
                 itemCount: favoriteAds.length,
                 itemBuilder: (context, index) {
@@ -107,7 +108,8 @@ class FavoritesScreen extends ConsumerWidget {
         id: '1',
         title: 'iPhone 14 Pro Max 256GB',
         price: 4500,
-        image: 'https://images.unsplash.com/photo-1696446701796-da61225697cc?w=400&h=400&fit=crop',
+        image:
+            'https://images.unsplash.com/photo-1696446701796-da61225697cc?w=400&h=400&fit=crop',
         comments: 5,
         likes: 15,
         location: 'Doha',
@@ -117,7 +119,8 @@ class FavoritesScreen extends ConsumerWidget {
         id: '3',
         title: '2 BHK Apartment for Rent',
         price: 5500,
-        image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=400&fit=crop',
+        image:
+            'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=400&fit=crop',
         comments: 8,
         likes: 23,
         location: 'West Bay',
@@ -125,4 +128,4 @@ class FavoritesScreen extends ConsumerWidget {
       ),
     ];
   }
-} 
+}

@@ -18,7 +18,7 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
-  bool _isTyping = false;
+  final bool _isTyping = false;
 
   // Mock data - in real app this would come from a provider
   final List<Message> _messages = [

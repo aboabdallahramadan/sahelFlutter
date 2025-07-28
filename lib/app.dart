@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'l10n/app_localizations.dart';
 import 'shared/themes/app_theme.dart';
 import 'shared/routes/app_router.dart';
+import 'core/providers/locale_provider.dart';
 
 class SahelApp extends ConsumerWidget {
   const SahelApp({super.key});
@@ -12,6 +13,7 @@ class SahelApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
+    final locale = ref.watch(localeProvider);
 
     return ScreenUtilInit(
       designSize: const Size(375, 812), // iPhone X design size
@@ -35,7 +37,7 @@ class SahelApp extends ConsumerWidget {
             Locale('en'),
             Locale('ar'),
           ],
-          locale: const Locale('en'), // Will be managed by locale provider
+          locale: locale, // Managed by locale provider
         );
       },
     );

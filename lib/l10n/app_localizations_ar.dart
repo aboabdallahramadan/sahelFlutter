@@ -75,6 +75,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get categoriesOthers => 'أخرى';
 
   @override
+  String get categoriesSubcategories => 'فئة فرعية';
+
+  @override
+  String get categoriesViewSubcategories => 'عرض الفئات الفرعية';
+
+  @override
   String get categoryDiscover => 'اكتشف أحدث الإعلانات في هذا القسم';
 
   @override
@@ -137,6 +143,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get commonHome => 'الرئيسية';
+
+  @override
+  String get commonViewAll => 'رؤية الكل';
+
+  @override
+  String get commonLatestAds => 'آخر الاعلانات';
 
   @override
   String get footerDescription =>

@@ -14,6 +14,191 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+SubCategory _$SubCategoryFromJson(Map<String, dynamic> json) {
+  return _SubCategory.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SubCategory {
+  String get id => throw _privateConstructorUsedError;
+  String get title => throw _privateConstructorUsedError;
+  String get image => throw _privateConstructorUsedError;
+
+  /// Serializes this SubCategory to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SubCategory
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SubCategoryCopyWith<SubCategory> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SubCategoryCopyWith<$Res> {
+  factory $SubCategoryCopyWith(
+          SubCategory value, $Res Function(SubCategory) then) =
+      _$SubCategoryCopyWithImpl<$Res, SubCategory>;
+  @useResult
+  $Res call({String id, String title, String image});
+}
+
+/// @nodoc
+class _$SubCategoryCopyWithImpl<$Res, $Val extends SubCategory>
+    implements $SubCategoryCopyWith<$Res> {
+  _$SubCategoryCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SubCategory
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? title = null,
+    Object? image = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      image: null == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SubCategoryImplCopyWith<$Res>
+    implements $SubCategoryCopyWith<$Res> {
+  factory _$$SubCategoryImplCopyWith(
+          _$SubCategoryImpl value, $Res Function(_$SubCategoryImpl) then) =
+      __$$SubCategoryImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String id, String title, String image});
+}
+
+/// @nodoc
+class __$$SubCategoryImplCopyWithImpl<$Res>
+    extends _$SubCategoryCopyWithImpl<$Res, _$SubCategoryImpl>
+    implements _$$SubCategoryImplCopyWith<$Res> {
+  __$$SubCategoryImplCopyWithImpl(
+      _$SubCategoryImpl _value, $Res Function(_$SubCategoryImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SubCategory
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? title = null,
+    Object? image = null,
+  }) {
+    return _then(_$SubCategoryImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      image: null == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SubCategoryImpl implements _SubCategory {
+  const _$SubCategoryImpl(
+      {required this.id, required this.title, required this.image});
+
+  factory _$SubCategoryImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SubCategoryImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String title;
+  @override
+  final String image;
+
+  @override
+  String toString() {
+    return 'SubCategory(id: $id, title: $title, image: $image)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SubCategoryImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.image, image) || other.image == image));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, title, image);
+
+  /// Create a copy of SubCategory
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SubCategoryImplCopyWith<_$SubCategoryImpl> get copyWith =>
+      __$$SubCategoryImplCopyWithImpl<_$SubCategoryImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SubCategoryImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SubCategory implements SubCategory {
+  const factory _SubCategory(
+      {required final String id,
+      required final String title,
+      required final String image}) = _$SubCategoryImpl;
+
+  factory _SubCategory.fromJson(Map<String, dynamic> json) =
+      _$SubCategoryImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get title;
+  @override
+  String get image;
+
+  /// Create a copy of SubCategory
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SubCategoryImplCopyWith<_$SubCategoryImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 Category _$CategoryFromJson(Map<String, dynamic> json) {
   return _Category.fromJson(json);
 }
@@ -21,10 +206,9 @@ Category _$CategoryFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Category {
   String get id => throw _privateConstructorUsedError;
-  String get nameKey => throw _privateConstructorUsedError;
-  String get icon => throw _privateConstructorUsedError;
-  String? get color => throw _privateConstructorUsedError;
-  List<String> get subcategoryKeys => throw _privateConstructorUsedError;
+  String get title => throw _privateConstructorUsedError;
+  int get adsCount => throw _privateConstructorUsedError;
+  List<SubCategory> get subcategories => throw _privateConstructorUsedError;
 
   /// Serializes this Category to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,11 +226,7 @@ abstract class $CategoryCopyWith<$Res> {
       _$CategoryCopyWithImpl<$Res, Category>;
   @useResult
   $Res call(
-      {String id,
-      String nameKey,
-      String icon,
-      String? color,
-      List<String> subcategoryKeys});
+      {String id, String title, int adsCount, List<SubCategory> subcategories});
 }
 
 /// @nodoc
@@ -65,32 +245,27 @@ class _$CategoryCopyWithImpl<$Res, $Val extends Category>
   @override
   $Res call({
     Object? id = null,
-    Object? nameKey = null,
-    Object? icon = null,
-    Object? color = freezed,
-    Object? subcategoryKeys = null,
+    Object? title = null,
+    Object? adsCount = null,
+    Object? subcategories = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      nameKey: null == nameKey
-          ? _value.nameKey
-          : nameKey // ignore: cast_nullable_to_non_nullable
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
               as String,
-      icon: null == icon
-          ? _value.icon
-          : icon // ignore: cast_nullable_to_non_nullable
-              as String,
-      color: freezed == color
-          ? _value.color
-          : color // ignore: cast_nullable_to_non_nullable
-              as String?,
-      subcategoryKeys: null == subcategoryKeys
-          ? _value.subcategoryKeys
-          : subcategoryKeys // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+      adsCount: null == adsCount
+          ? _value.adsCount
+          : adsCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      subcategories: null == subcategories
+          ? _value.subcategories
+          : subcategories // ignore: cast_nullable_to_non_nullable
+              as List<SubCategory>,
     ) as $Val);
   }
 }
@@ -104,11 +279,7 @@ abstract class _$$CategoryImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
-      String nameKey,
-      String icon,
-      String? color,
-      List<String> subcategoryKeys});
+      {String id, String title, int adsCount, List<SubCategory> subcategories});
 }
 
 /// @nodoc
@@ -125,32 +296,27 @@ class __$$CategoryImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? nameKey = null,
-    Object? icon = null,
-    Object? color = freezed,
-    Object? subcategoryKeys = null,
+    Object? title = null,
+    Object? adsCount = null,
+    Object? subcategories = null,
   }) {
     return _then(_$CategoryImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      nameKey: null == nameKey
-          ? _value.nameKey
-          : nameKey // ignore: cast_nullable_to_non_nullable
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
               as String,
-      icon: null == icon
-          ? _value.icon
-          : icon // ignore: cast_nullable_to_non_nullable
-              as String,
-      color: freezed == color
-          ? _value.color
-          : color // ignore: cast_nullable_to_non_nullable
-              as String?,
-      subcategoryKeys: null == subcategoryKeys
-          ? _value._subcategoryKeys
-          : subcategoryKeys // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+      adsCount: null == adsCount
+          ? _value.adsCount
+          : adsCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      subcategories: null == subcategories
+          ? _value._subcategories
+          : subcategories // ignore: cast_nullable_to_non_nullable
+              as List<SubCategory>,
     ));
   }
 }
@@ -160,11 +326,10 @@ class __$$CategoryImplCopyWithImpl<$Res>
 class _$CategoryImpl implements _Category {
   const _$CategoryImpl(
       {required this.id,
-      required this.nameKey,
-      required this.icon,
-      this.color,
-      final List<String> subcategoryKeys = const []})
-      : _subcategoryKeys = subcategoryKeys;
+      required this.title,
+      required this.adsCount,
+      final List<SubCategory> subcategories = const []})
+      : _subcategories = subcategories;
 
   factory _$CategoryImpl.fromJson(Map<String, dynamic> json) =>
       _$$CategoryImplFromJson(json);
@@ -172,23 +337,21 @@ class _$CategoryImpl implements _Category {
   @override
   final String id;
   @override
-  final String nameKey;
+  final String title;
   @override
-  final String icon;
-  @override
-  final String? color;
-  final List<String> _subcategoryKeys;
+  final int adsCount;
+  final List<SubCategory> _subcategories;
   @override
   @JsonKey()
-  List<String> get subcategoryKeys {
-    if (_subcategoryKeys is EqualUnmodifiableListView) return _subcategoryKeys;
+  List<SubCategory> get subcategories {
+    if (_subcategories is EqualUnmodifiableListView) return _subcategories;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_subcategoryKeys);
+    return EqualUnmodifiableListView(_subcategories);
   }
 
   @override
   String toString() {
-    return 'Category(id: $id, nameKey: $nameKey, icon: $icon, color: $color, subcategoryKeys: $subcategoryKeys)';
+    return 'Category(id: $id, title: $title, adsCount: $adsCount, subcategories: $subcategories)';
   }
 
   @override
@@ -197,17 +360,17 @@ class _$CategoryImpl implements _Category {
         (other.runtimeType == runtimeType &&
             other is _$CategoryImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.nameKey, nameKey) || other.nameKey == nameKey) &&
-            (identical(other.icon, icon) || other.icon == icon) &&
-            (identical(other.color, color) || other.color == color) &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.adsCount, adsCount) ||
+                other.adsCount == adsCount) &&
             const DeepCollectionEquality()
-                .equals(other._subcategoryKeys, _subcategoryKeys));
+                .equals(other._subcategories, _subcategories));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, nameKey, icon, color,
-      const DeepCollectionEquality().hash(_subcategoryKeys));
+  int get hashCode => Object.hash(runtimeType, id, title, adsCount,
+      const DeepCollectionEquality().hash(_subcategories));
 
   /// Create a copy of Category
   /// with the given fields replaced by the non-null parameter values.
@@ -228,10 +391,9 @@ class _$CategoryImpl implements _Category {
 abstract class _Category implements Category {
   const factory _Category(
       {required final String id,
-      required final String nameKey,
-      required final String icon,
-      final String? color,
-      final List<String> subcategoryKeys}) = _$CategoryImpl;
+      required final String title,
+      required final int adsCount,
+      final List<SubCategory> subcategories}) = _$CategoryImpl;
 
   factory _Category.fromJson(Map<String, dynamic> json) =
       _$CategoryImpl.fromJson;
@@ -239,13 +401,11 @@ abstract class _Category implements Category {
   @override
   String get id;
   @override
-  String get nameKey;
+  String get title;
   @override
-  String get icon;
+  int get adsCount;
   @override
-  String? get color;
-  @override
-  List<String> get subcategoryKeys;
+  List<SubCategory> get subcategories;
 
   /// Create a copy of Category
   /// with the given fields replaced by the non-null parameter values.

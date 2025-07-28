@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../shared/widgets/language_selection_dialog.dart';
 import '../widgets/banner_carousel.dart';
 import '../widgets/ads_section.dart';
 
@@ -163,7 +164,11 @@ class HomeScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 16.sp),
               ),
               onTap: () {
-                // TODO: Implement language change
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (context) => const LanguageSelectionDialog(),
+                );
               },
             ),
             ListTile(
