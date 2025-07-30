@@ -18,7 +18,7 @@ class ContactScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Scaffold(
       backgroundColor: AppColors.primaryBg,
       appBar: AppBar(
@@ -47,21 +47,21 @@ class ContactScreen extends StatelessWidget {
                   Text(
                     'How can we help you?',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: AppColors.textWhite,
-                      fontWeight: FontWeight.bold,
-                    ),
+                          color: AppColors.textWhite,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: AppConstants.spacing8),
                   Text(
                     'Get in touch with our support team',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textWhite.withOpacity(0.9),
-                    ),
+                          color: AppColors.textWhite.withOpacity(0.9),
+                        ),
                   ),
                 ],
               ),
             ),
-            
+
             // Contact Options
             Container(
               color: AppColors.backgroundWhite,
@@ -72,21 +72,21 @@ class ContactScreen extends StatelessWidget {
                   Text(
                     'Contact Methods',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: AppConstants.spacing24),
-                  
+
                   // Email
                   _buildContactOption(
                     context,
                     icon: Icons.email,
                     title: 'Email Us',
-                    subtitle: 'support@mzadqatar.com',
-                    onTap: () => _launchUrl('mailto:support@mzadqatar.com'),
+                    subtitle: 'support@sahel.com',
+                    onTap: () => _launchUrl('mailto:support@sahel.sa'),
                   ),
                   const SizedBox(height: AppConstants.spacing16),
-                  
+
                   // Phone
                   _buildContactOption(
                     context,
@@ -96,7 +96,7 @@ class ContactScreen extends StatelessWidget {
                     onTap: () => _launchUrl('tel:+97412345678'),
                   ),
                   const SizedBox(height: AppConstants.spacing16),
-                  
+
                   // WhatsApp
                   _buildContactOption(
                     context,
@@ -105,20 +105,20 @@ class ContactScreen extends StatelessWidget {
                     subtitle: '+974 1234 5678',
                     onTap: () => _launchUrl('https://wa.me/97412345678'),
                   ),
-                  
+
                   const SizedBox(height: AppConstants.spacing32),
                   const Divider(),
                   const SizedBox(height: AppConstants.spacing32),
-                  
+
                   // FAQ Section
                   Text(
                     'Frequently Asked Questions',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: AppConstants.spacing16),
-                  
+
                   _buildFAQItem(
                     context,
                     'How do I post an ad?',
@@ -131,41 +131,18 @@ class ContactScreen extends StatelessWidget {
                   ),
                   _buildFAQItem(
                     context,
-                    'Is Mzad Qatar free to use?',
-                    'Yes, Mzad Qatar is completely free for both buyers and sellers. There are no hidden charges.',
+                    'Is Sahel free to use?',
+                    'Yes, Sahel is completely free for both buyers and sellers. There are no hidden charges.',
                   ),
                   _buildFAQItem(
                     context,
                     'How do I report a suspicious ad?',
                     'If you find a suspicious ad, tap the three dots menu on the ad page and select "Report". Our team will review it promptly.',
                   ),
-                  
+
                   const SizedBox(height: AppConstants.spacing32),
-                  const Divider(),
-                  const SizedBox(height: AppConstants.spacing32),
-                  
-                  // Office Hours
-                  Text(
-                    'Office Hours',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: AppConstants.spacing16),
-                  Container(
-                    padding: const EdgeInsets.all(AppConstants.spacing16),
-                    decoration: BoxDecoration(
-                      color: AppColors.backgroundGray,
-                      borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
-                    ),
-                    child: Column(
-                      children: [
-                        _buildHoursRow(context, 'Sunday - Thursday', '8:00 AM - 6:00 PM'),
-                        const SizedBox(height: AppConstants.spacing8),
-                        _buildHoursRow(context, 'Friday - Saturday', 'Closed'),
-                      ],
-                    ),
-                  ),
+                  // const Divider(),
+                  // const SizedBox(height: AppConstants.spacing32),
                 ],
               ),
             ),
@@ -198,7 +175,8 @@ class ContactScreen extends StatelessWidget {
               height: 48,
               decoration: BoxDecoration(
                 color: AppColors.primaryAccent.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppConstants.radiusCircular),
+                borderRadius:
+                    BorderRadius.circular(AppConstants.radiusCircular),
               ),
               child: Icon(
                 icon,
@@ -213,14 +191,14 @@ class ContactScreen extends StatelessWidget {
                   Text(
                     title,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                   Text(
                     subtitle,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                          color: AppColors.textSecondary,
+                        ),
                   ),
                 ],
               ),
@@ -241,8 +219,8 @@ class ContactScreen extends StatelessWidget {
       title: Text(
         question,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-        ),
+              fontWeight: FontWeight.w600,
+            ),
       ),
       children: [
         Padding(
@@ -255,9 +233,9 @@ class ContactScreen extends StatelessWidget {
           child: Text(
             answer,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.textSecondary,
-              height: 1.5,
-            ),
+                  color: AppColors.textSecondary,
+                  height: 1.5,
+                ),
           ),
         ),
       ],
@@ -275,11 +253,12 @@ class ContactScreen extends StatelessWidget {
         Text(
           hours,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: hours == 'Closed' ? AppColors.error : AppColors.textPrimary,
-          ),
+                fontWeight: FontWeight.w600,
+                color:
+                    hours == 'Closed' ? AppColors.error : AppColors.textPrimary,
+              ),
         ),
       ],
     );
   }
-} 
+}

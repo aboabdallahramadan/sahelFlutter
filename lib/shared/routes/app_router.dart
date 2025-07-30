@@ -15,6 +15,7 @@ import '../../features/ads/presentation/screens/post_ad_screen.dart';
 import '../../features/chat/presentation/screens/chats_screen.dart';
 import '../../features/chat/presentation/screens/chat_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/profile/presentation/screens/my_ads_screen.dart';
 import '../../features/profile/presentation/screens/favorites_screen.dart';
 import '../../features/profile/presentation/screens/notifications_screen.dart';
 import '../../features/static/presentation/screens/terms_screen.dart';
@@ -122,6 +123,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 },
               ),
             ],
+          ),
+
+          // My Ads
+          GoRoute(
+            path: 'my-ads',
+            name: 'myAds',
+            builder: (context, state) => const MyAdsScreen(),
           ),
 
           // Favorites

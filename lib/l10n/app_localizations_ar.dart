@@ -160,6 +160,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonSAR => 'ريال سعودي';
 
   @override
+  String get commonSeeMore => 'عرض المزيد';
+
+  @override
   String get footerDescription =>
       'موقع إعلانات سهل البيع والشراء الأعلى في الجودة. إضافة إعلانات مجانية. شراء وبيع سيارات مستعملة، شقق للإيجار، البحث عن وظائف والمزيد من العناصر المنزلية والجودة في سهل';
 

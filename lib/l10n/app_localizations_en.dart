@@ -161,6 +161,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonSAR => 'SAR';
 
   @override
+  String get commonSeeMore => 'See More';
+
+  @override
   String get footerDescription =>
       'Top Classified Site in Gulf. Post free ads. Buy and sell used cars, apartment for rent, search jobs and more cheap quality items in Gulf';
 

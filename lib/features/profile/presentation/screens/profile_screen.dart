@@ -74,7 +74,7 @@ class ProfileScreen extends ConsumerWidget {
                     icon: Icons.post_add,
                     title: l10n.profileMyAds,
                     onTap: () {
-                      // TODO: Navigate to my ads
+                      context.goNamed('myAds');
                     },
                   ),
                   const Divider(height: 1),
@@ -186,15 +186,6 @@ class ProfileScreen extends ConsumerWidget {
                     title: l10n.profileHelp,
                     onTap: () {
                       context.goNamed('contact');
-                    },
-                  ),
-                  const Divider(height: 1),
-                  _buildMenuItem(
-                    context: context,
-                    icon: Icons.info,
-                    title: l10n.profileAbout,
-                    onTap: () {
-                      // TODO: Navigate to about
                     },
                   ),
                 ],

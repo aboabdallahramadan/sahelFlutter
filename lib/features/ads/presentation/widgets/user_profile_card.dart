@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/models/ad_user.dart';
@@ -22,20 +21,18 @@ class UserProfileCard extends StatelessWidget {
           Text(
             l10n.adPostedBy,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           const SizedBox(height: AppConstants.spacing16),
-          
           Row(
             children: [
               // Avatar
               CircleAvatar(
                 radius: 30,
                 backgroundColor: AppColors.backgroundGray,
-                backgroundImage: user.avatar != null
-                    ? NetworkImage(user.avatar!)
-                    : null,
+                backgroundImage:
+                    user.avatar != null ? NetworkImage(user.avatar!) : null,
                 child: user.avatar == null
                     ? const Icon(
                         Icons.person,
@@ -45,7 +42,7 @@ class UserProfileCard extends StatelessWidget {
                     : null,
               ),
               const SizedBox(width: AppConstants.spacing16),
-              
+
               // User Info
               Expanded(
                 child: Column(
@@ -54,33 +51,21 @@ class UserProfileCard extends StatelessWidget {
                     Text(
                       user.name,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     const SizedBox(height: AppConstants.spacing4),
                     Text(
                       '${l10n.adMemberSince} ${user.memberSince}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                            color: AppColors.textSecondary,
+                          ),
                     ),
                   ],
                 ),
               ),
-              
-              // View Profile Button
-              TextButton(
-                onPressed: () {
-                  context.goNamed(
-                    'userProfile',
-                    pathParameters: {'userId': user.id},
-                  );
-                },
-                child: const Text('View Profile'),
-              ),
             ],
           ),
-          
           if (user.phoneNumber != null) ...[
             const SizedBox(height: AppConstants.spacing16),
             Container(
@@ -100,8 +85,8 @@ class UserProfileCard extends StatelessWidget {
                   Text(
                     user.phoneNumber!,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 ],
               ),
@@ -111,4 +96,4 @@ class UserProfileCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

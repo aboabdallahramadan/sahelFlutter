@@ -54,12 +54,6 @@ class AdDetailsScreen extends ConsumerWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share_outlined),
-            onPressed: () {
-              // TODO: Implement share
-            },
-          ),
-          IconButton(
             icon: const Icon(Icons.favorite_border),
             onPressed: () {
               // TODO: Implement favorite

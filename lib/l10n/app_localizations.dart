@@ -398,6 +398,12 @@ abstract class AppLocalizations {
   /// **'SAR'**
   String get commonSAR;
 
+  /// No description provided for @commonSeeMore.
+  ///
+  /// In en, this message translates to:
+  /// **'See More'**
+  String get commonSeeMore;
+
   /// No description provided for @footerDescription.
   ///
   /// In en, this message translates to:
