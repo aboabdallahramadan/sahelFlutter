@@ -24,7 +24,7 @@ class SubcategoryScreen extends ConsumerStatefulWidget {
 }
 
 class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
-  String _sortBy = 'newest';
+  // String _sortBy = 'newest';
   String _filterLocation = 'all';
   RangeValues _priceRange = const RangeValues(0, 10000);
 
@@ -119,7 +119,7 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
             child: Row(
               children: [
                 Text(
-                  '${ads.length} ads',
+                  '${ads.length} ${l10n.commonAds}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -136,32 +136,32 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                     borderRadius:
                         BorderRadius.circular(AppConstants.radiusLarge),
                   ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: _sortBy,
-                      icon: const Icon(Icons.arrow_drop_down),
-                      isDense: true,
-                      items: [
-                        DropdownMenuItem(
-                          value: 'newest',
-                          child: Text('Newest First'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'price_low',
-                          child: Text('Price: Low to High'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'price_high',
-                          child: Text('Price: High to Low'),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _sortBy = value!;
-                        });
-                      },
-                    ),
-                  ),
+                  // child: DropdownButtonHideUnderline(
+                  //   child: DropdownButton<String>(
+                  //     value: _sortBy,
+                  //     icon: const Icon(Icons.arrow_drop_down),
+                  //     isDense: true,
+                  //     items: [
+                  //       DropdownMenuItem(
+                  //         value: 'newest',
+                  //         child: Text('Newest First'),
+                  //       ),
+                  //       DropdownMenuItem(
+                  //         value: 'price_low',
+                  //         child: Text('Price: Low to High'),
+                  //       ),
+                  //       DropdownMenuItem(
+                  //         value: 'price_high',
+                  //         child: Text('Price: High to Low'),
+                  //       ),
+                  //     ],
+                  //     onChanged: (value) {
+                  //       setState(() {
+                  //         _sortBy = value!;
+                  //       });
+                  //     },
+                  //   ),
+                  // ),
                 ),
               ],
             ),

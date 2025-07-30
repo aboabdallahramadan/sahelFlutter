@@ -242,6 +242,12 @@ abstract class AppLocalizations {
   /// **'View Subcategories'**
   String get categoriesViewSubcategories;
 
+  /// No description provided for @subcategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subcategories'**
+  String get subcategoriesTitle;
+
   /// No description provided for @categoryDiscover.
   ///
   /// In en, this message translates to:
@@ -379,6 +385,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Latest Ads'**
   String get commonLatestAds;
+
+  /// No description provided for @commonTotalAds.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Ads'**
+  String get commonTotalAds;
+
+  /// No description provided for @commonSAR.
+  ///
+  /// In en, this message translates to:
+  /// **'SAR'**
+  String get commonSAR;
 
   /// No description provided for @footerDescription.
   ///

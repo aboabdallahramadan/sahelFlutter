@@ -145,7 +145,7 @@ class _CategoryCardState extends State<CategoryCard>
                       // Subcategories count
                       if (hasSubcategories)
                         Text(
-                          '${widget.category.subcategories.length} subcategories',
+                          '${widget.category.subcategories.length} ${l10n.subcategoriesTitle}',
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: AppColors.textSecondary,

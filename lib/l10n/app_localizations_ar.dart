@@ -81,6 +81,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get categoriesViewSubcategories => 'عرض الفئات الفرعية';
 
   @override
+  String get subcategoriesTitle => 'فئات فرعية';
+
+  @override
   String get categoryDiscover => 'اكتشف أحدث الإعلانات في هذا القسم';
 
   @override
@@ -149,6 +152,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get commonLatestAds => 'آخر الاعلانات';
+
+  @override
+  String get commonTotalAds => 'كل الاعلانات';
+
+  @override
+  String get commonSAR => 'ريال سعودي';
 
   @override
   String get footerDescription =>

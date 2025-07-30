@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/models/ad_small.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class AdCard extends StatelessWidget {
   final AdSmall ad;
@@ -13,6 +14,7 @@ class AdCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: () {
         context.goNamed('adDetails', pathParameters: {'adId': ad.id});
@@ -87,7 +89,7 @@ class AdCard extends StatelessWidget {
 
                   // Price
                   Text(
-                    'SAR ${ad.price.toStringAsFixed(0)}',
+                    '${ad.price.toStringAsFixed(0)} ${l10n.commonSAR}',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: AppColors.primaryAccent,
                           fontWeight: FontWeight.bold,

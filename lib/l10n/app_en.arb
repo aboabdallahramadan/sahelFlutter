@@ -28,6 +28,9 @@
   "categoriesOthers": "Others",
   "categoriesSubcategories": "subcategories",
   "categoriesViewSubcategories": "View Subcategories",
+
+  "@subcategories": {"description": "Subcategories string"},
+  "subcategoriesTitle": "Subcategories",
   
   "@category": {"description": "Category page strings"},
   "categoryDiscover": "Discover the latest ads in this category",
@@ -55,6 +58,8 @@
   "commonHome": "Home",
   "commonViewAll": "View All",
   "commonLatestAds": "Latest Ads",
+  "commonTotalAds": "Total Ads",
+  "commonSAR": "SAR",
   
   "@footer": {"description": "Footer strings"},
   "footerDescription": "Top Classified Site in Gulf. Post free ads. Buy and sell used cars, apartment for rent, search jobs and more cheap quality items in Gulf",

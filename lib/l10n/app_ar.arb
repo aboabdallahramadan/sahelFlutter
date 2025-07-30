@@ -28,6 +28,9 @@
   "categoriesOthers": "أخرى",
   "categoriesSubcategories": "فئة فرعية",
   "categoriesViewSubcategories": "عرض الفئات الفرعية",
+
+  "@subcategories": {"description": "Subcategories string"},
+  "subcategoriesTitle": "فئات فرعية",
   
   "@category": {"description": "Category page strings"},
   "categoryDiscover": "اكتشف أحدث الإعلانات في هذا القسم",
@@ -55,6 +58,8 @@
   "commonHome": "الرئيسية",
   "commonViewAll": "رؤية الكل",
   "commonLatestAds": "آخر الاعلانات",
+  "commonTotalAds": "كل الاعلانات",
+  "commonSAR": "ريال سعودي",
   
   "@footer": {"description": "Footer strings"},
   "footerDescription": "موقع إعلانات سهل البيع والشراء الأعلى في الجودة. إضافة إعلانات مجانية. شراء وبيع سيارات مستعملة، شقق للإيجار، البحث عن وظائف والمزيد من العناصر المنزلية والجودة في سهل",

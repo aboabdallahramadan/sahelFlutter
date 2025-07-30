@@ -82,6 +82,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categoriesViewSubcategories => 'View Subcategories';
 
   @override
+  String get subcategoriesTitle => 'Subcategories';
+
+  @override
   String get categoryDiscover => 'Discover the latest ads in this category';
 
   @override
@@ -150,6 +153,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonLatestAds => 'Latest Ads';
+
+  @override
+  String get commonTotalAds => 'Total Ads';
+
+  @override
+  String get commonSAR => 'SAR';
 
   @override
   String get footerDescription =>

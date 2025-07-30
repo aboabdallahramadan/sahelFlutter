@@ -85,7 +85,7 @@ class CategoriesScreen extends ConsumerWidget {
                                   ),
                             ),
                             Text(
-                              'Categories',
+                              l10n.categoriesTitle,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall
@@ -113,7 +113,7 @@ class CategoriesScreen extends ConsumerWidget {
                                   ),
                             ),
                             Text(
-                              'Total Ads',
+                              l10n.commonTotalAds,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall
@@ -141,7 +141,7 @@ class CategoriesScreen extends ConsumerWidget {
                                   ),
                             ),
                             Text(
-                              'Subcategories',
+                              l10n.subcategoriesTitle,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall
