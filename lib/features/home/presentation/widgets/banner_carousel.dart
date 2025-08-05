@@ -2,93 +2,97 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/services/api_service.dart';
+import '../../providers/sliders_provider.dart';
+import '../../models/slider_model.dart';
 
-class BannerCarousel extends StatefulWidget {
+class BannerCarousel extends ConsumerStatefulWidget {
   const BannerCarousel({super.key});
 
   @override
-  State<BannerCarousel> createState() => _BannerCarouselState();
+  ConsumerState<BannerCarousel> createState() => _BannerCarouselState();
 }
 
-class _BannerCarouselState extends State<BannerCarousel> {
+class _BannerCarouselState extends ConsumerState<BannerCarousel> {
   int _currentIndex = 0;
   final CarouselSliderController _controller = CarouselSliderController();
 
-  final List<Map<String, String>> banners = [
-    {
-      'image':
-          'https://images.unsplash.com/photo-1605629921711-2f6b00c6bbf4?w=1920&h=600&fit=crop'
-    },
-    {
-      'image':
-          'https://images.unsplash.com/photo-1605629921711-2f6b00c6bbf4?w=1920&h=600&fit=crop'
-    },
-    {
-      'image':
-          'https://images.unsplash.com/photo-1605629921711-2f6b00c6bbf4?w=1920&h=600&fit=crop'
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Stack(
+    final slidersAsync = ref.watch(slidersProvider);
+
+    return slidersAsync.when(
+      data: (sliders) {
+        if (sliders.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Column(
           children: [
-            CarouselSlider(
-              items: banners.map((banner) => _buildBannerItem(banner)).toList(),
-              carouselController: _controller,
-              options: CarouselOptions(
-                height: 200.h,
-                viewportFraction: 1.0,
-                autoPlay: true,
-                autoPlayInterval: const Duration(seconds: 5),
-                autoPlayAnimationDuration: const Duration(milliseconds: 800),
-                autoPlayCurve: Curves.fastOutSlowIn,
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
-              ),
-            ),
-            Positioned(
-              bottom: 20.h,
-              left: 0,
-              right: 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: banners.asMap().entries.map((entry) {
-                  return GestureDetector(
-                    onTap: () => _controller.animateToPage(entry.key),
-                    child: Container(
-                      width: _currentIndex == entry.key ? 24.w : 8.w,
-                      height: 8.h,
-                      margin: EdgeInsets.symmetric(horizontal: 4.w),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4.r),
-                        color: _currentIndex == entry.key
-                            ? AppColors.textWhite
-                            : AppColors.textWhite.withOpacity(0.4),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
+            Stack(
+              children: [
+                CarouselSlider(
+                  items: sliders
+                      .map((slider) => _buildBannerItem(slider))
+                      .toList(),
+                  carouselController: _controller,
+                  options: CarouselOptions(
+                    height: 200.h,
+                    viewportFraction: 1.0,
+                    autoPlay: true,
+                    autoPlayInterval: const Duration(seconds: 5),
+                    autoPlayAnimationDuration:
+                        const Duration(milliseconds: 800),
+                    autoPlayCurve: Curves.fastOutSlowIn,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                  ),
+                ),
+                Positioned(
+                  bottom: 20.h,
+                  left: 0,
+                  right: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: sliders.asMap().entries.map((entry) {
+                      return GestureDetector(
+                        onTap: () => _controller.animateToPage(entry.key),
+                        child: Container(
+                          width: _currentIndex == entry.key ? 24.w : 8.w,
+                          height: 8.h,
+                          margin: EdgeInsets.symmetric(horizontal: 4.w),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4.r),
+                            color: _currentIndex == entry.key
+                                ? AppColors.textWhite
+                                : AppColors.textWhite.withOpacity(0.4),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-      ],
+        );
+      },
+      loading: () => _buildLoadingCarousel(),
+      error: (error, stack) => const SizedBox.shrink(),
     );
   }
 
-  Widget _buildBannerItem(Map<String, String> banner) {
+  Widget _buildBannerItem(SliderModel slider) {
     return Stack(
       children: [
         CachedNetworkImage(
-          imageUrl: banner['image']!,
+          imageUrl: '${ApiService.baseUrl}/uploads/${slider.imageUrl}',
           fit: BoxFit.cover,
           width: double.infinity,
           height: 200.h,
@@ -110,6 +114,18 @@ class _BannerCarouselState extends State<BannerCarousel> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildLoadingCarousel() {
+    return Container(
+      height: 200.h,
+      color: AppColors.backgroundGray,
+      child: const Center(
+        child: CircularProgressIndicator(
+          color: AppColors.primaryAccent,
+        ),
+      ),
     );
   }
 }

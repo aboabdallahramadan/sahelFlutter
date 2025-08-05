@@ -6,6 +6,7 @@ import 'dart:async';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../providers/auth_provider.dart';
 
 class OtpScreen extends ConsumerStatefulWidget {
   final String phone;
@@ -23,7 +24,6 @@ class OtpScreen extends ConsumerStatefulWidget {
 
 class _OtpScreenState extends ConsumerState<OtpScreen> {
   final _pinController = TextEditingController();
-  bool _isLoading = false;
   bool _canResend = false;
   int _resendTimer = 60;
   Timer? _timer;
@@ -46,7 +46,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       _canResend = false;
       _resendTimer = 60;
     });
-    
+
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_resendTimer > 0) {
@@ -73,30 +73,32 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     );
   }
 
-  void _handleVerifyOTP(String otp) {
+  void _handleVerifyOTP(String otp) async {
     if (otp.length != 6) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    final success = await ref.read(authProvider.notifier).verifyOtp(otp);
 
-    // Simulate API call
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        
-        // Navigate to home after successful verification
-        context.go('/');
-      }
-    });
+    if (success && mounted) {
+      // Navigate to home after successful verification
+      context.go('/');
+    } else if (mounted) {
+      final error = ref.read(authProvider).error;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error ?? 'OTP verification failed'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      // Clear the pin input on error
+      _pinController.clear();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+    final authState = ref.watch(authProvider);
+
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
@@ -136,7 +138,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: AppConstants.spacing48),
-              
+
               // Icon
               Center(
                 child: Container(
@@ -144,7 +146,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                   height: 80,
                   decoration: BoxDecoration(
                     color: AppColors.primaryAccent.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(AppConstants.radiusCircular),
+                    borderRadius:
+                        BorderRadius.circular(AppConstants.radiusCircular),
                   ),
                   child: const Icon(
                     Icons.message_outlined,
@@ -154,38 +157,38 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                 ),
               ),
               const SizedBox(height: AppConstants.spacing32),
-              
+
               // Title
               Text(
                 l10n.authEnterOTP,
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                      fontWeight: FontWeight.bold,
+                    ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppConstants.spacing16),
-              
+
               // Subtitle
               Text(
                 l10n.authOTPSentTo,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                      color: AppColors.textSecondary,
+                    ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppConstants.spacing8),
-              
+
               // Phone number
               Text(
                 widget.phone,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryAccent,
-                ),
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryAccent,
+                    ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppConstants.spacing48),
-              
+
               // OTP Input
               Center(
                 child: Pinput(
@@ -196,12 +199,12 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                   submittedPinTheme: submittedPinTheme,
                   showCursor: true,
                   autofocus: true,
-                  enabled: !_isLoading,
+                  enabled: !authState.isLoading,
                   onCompleted: _handleVerifyOTP,
                 ),
               ),
               const SizedBox(height: AppConstants.spacing32),
-              
+
               // Resend OTP
               Center(
                 child: _canResend
@@ -218,15 +221,15 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                     : Text(
                         l10n.authResendIn(_resendTimer),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                              color: AppColors.textSecondary,
+                            ),
                       ),
               ),
               const SizedBox(height: AppConstants.spacing48),
-              
+
               // Verify Button
               ElevatedButton(
-                onPressed: _isLoading
+                onPressed: authState.isLoading
                     ? null
                     : () => _handleVerifyOTP(_pinController.text),
                 style: ElevatedButton.styleFrom(
@@ -235,10 +238,11 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                     vertical: AppConstants.spacing16,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
+                    borderRadius:
+                        BorderRadius.circular(AppConstants.radiusLarge),
                   ),
                 ),
-                child: _isLoading
+                child: authState.isLoading
                     ? const SizedBox(
                         height: 20,
                         width: 20,
@@ -263,4 +267,4 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       ),
     );
   }
-} 
+}

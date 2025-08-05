@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/models/ad_small.dart';
-import '../../../../core/models/category.dart';
+import '../../../../core/services/api_service.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../home/presentation/widgets/ad_card.dart';
-import '../../providers/categories_provider.dart';
+import '../../../../features/home/models/offer_model.dart';
+import '../../../../features/home/presentation/widgets/ad_card.dart';
+import '../../providers/subcategory_offers_provider.dart';
+import '../widgets/filter_bottom_sheet.dart';
 
 class SubcategoryScreen extends ConsumerStatefulWidget {
-  final String subcategoryId;
-  final String? categoryId;
+  final String categoryId;
+  final String title;
 
   const SubcategoryScreen({
     super.key,
-    required this.subcategoryId,
-    this.categoryId,
+    required this.categoryId,
+    required this.title,
   });
 
   @override
@@ -24,448 +28,401 @@ class SubcategoryScreen extends ConsumerStatefulWidget {
 }
 
 class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
-  // String _sortBy = 'newest';
-  String _filterLocation = 'all';
-  RangeValues _priceRange = const RangeValues(0, 10000);
+  // Filter values
+  int? selectedRegionId;
+  double? minPrice;
+  double? maxPrice;
+  String? searchTerm;
+  final TextEditingController _searchController = TextEditingController();
 
-  // Helper method to get localized category name
-  String _getCategoryName(AppLocalizations l10n, String nameKey) {
-    switch (nameKey) {
-      case 'categoryVehicles':
-        return l10n.categoriesVehicles;
-      case 'categoryElectronics':
-        return l10n.categoriesElectronics;
-      case 'categoryFurniture':
-        return l10n.categoriesFamilyNeeds; // Using family needs for furniture
-      case 'categoryFashion':
-        return l10n.categoriesOthers; // Using others for fashion
-      case 'categoryGames':
-        return l10n.categoriesOthers; // Using others for games
-      case 'categorySports':
-        return l10n.categoriesSport;
-      case 'categoryMaterials':
-        return l10n.categoriesOthers; // Using others for materials
-      case 'categoryJobs':
-        return l10n.categoriesJobs;
-      case 'categoryServices':
-        return l10n.categoriesServices;
-      case 'categoryAnimals':
-        return l10n.categoriesAnimals;
-      case 'categoryOther':
-        return l10n.categoriesOthers;
-      default:
-        return nameKey;
-    }
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  AdSmall _convertOfferToAdSmall(OfferModel offer) {
+    return AdSmall(
+      id: offer.id.toString(),
+      title: offer.name,
+      price: offer.price,
+      image: '${ApiService.baseUrl}/uploads/${offer.mainImageUrl}',
+      comments: offer.numberOfComments,
+      likes: offer.numberOfFavorites,
+      location: offer.regionName,
+      timeAgo: timeago.format(offer.createdAt),
+    );
+  }
+
+  void _showFilterBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => FilterBottomSheet(
+        selectedRegionId: selectedRegionId,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        onApplyFilters: (regionId, min, max) {
+          setState(() {
+            selectedRegionId = regionId;
+            minPrice = min;
+            maxPrice = max;
+          });
+          // Refresh the offers with new filters
+          final params = SubcategoryFilterParams(
+            categoryId: int.parse(widget.categoryId),
+            regionId: regionId,
+            minPrice: min,
+            maxPrice: max,
+            searchTerm: searchTerm,
+          );
+          ref.invalidate(subcategoryOffersProvider(params));
+        },
+      ),
+    );
+  }
+
+  void _clearFilters() {
+    setState(() {
+      selectedRegionId = null;
+      minPrice = null;
+      maxPrice = null;
+      searchTerm = null;
+      _searchController.clear();
+    });
+    final params = SubcategoryFilterParams(
+      categoryId: int.parse(widget.categoryId),
+    );
+    ref.invalidate(subcategoryOffersProvider(params));
+  }
+
+  bool get hasActiveFilters {
+    return selectedRegionId != null ||
+        minPrice != null ||
+        maxPrice != null ||
+        (searchTerm != null && searchTerm!.isNotEmpty);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final categories = ref.watch(categoriesProvider);
+    final categoryIdInt = int.parse(widget.categoryId);
 
-    // Determine if we're showing a specific subcategory or category
-    final bool isSubcategoryView = widget.categoryId != null;
+    // Create filter parameters
+    final filterParams = SubcategoryFilterParams(
+      categoryId: categoryIdInt,
+      regionId: selectedRegionId,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+      searchTerm: searchTerm,
+    );
 
-    // Find the category and subcategory
-    Category category;
-    SubCategory? subcategory;
-
-    if (isSubcategoryView) {
-      // Find category by categoryId and subcategory by subcategoryId
-      category = categories.firstWhere(
-        (cat) => cat.id == widget.categoryId,
-        orElse: () => categories.first,
-      );
-      subcategory = category.subcategories.firstWhere(
-        (sub) => sub.id == widget.subcategoryId,
-        orElse: () => category.subcategories.isNotEmpty
-            ? category.subcategories.first
-            : const SubCategory(id: '', title: 'Unknown', image: ''),
-      );
-    } else {
-      // Find the category by subcategory ID - for backward compatibility
-      category = categories.firstWhere(
-        (cat) => cat.id == widget.subcategoryId,
-        orElse: () => categories.first,
-      );
-    }
-
-    // Mock ads - in real app this would come from a provider
-    final ads = _getMockAds();
+    final offersState = ref.watch(subcategoryOffersProvider(filterParams));
 
     return Scaffold(
       backgroundColor: AppColors.primaryBg,
       appBar: AppBar(
-        title: Text(isSubcategoryView
-            ? subcategory?.title ?? category.title
-            : category.title),
+        title: Text(widget.title),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: () => _showFilterBottomSheet(context),
+            icon: Stack(
+              children: [
+                const Icon(Icons.filter_list),
+                if (hasActiveFilters)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: AppColors.error,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            onPressed: _showFilterBottomSheet,
           ),
         ],
       ),
       body: Column(
         children: [
-          // Sort Bar
+          // Search Bar
           Container(
             color: AppColors.backgroundWhite,
-            padding: const EdgeInsets.all(AppConstants.spacing16),
+            padding: EdgeInsets.all(AppConstants.spacing16R),
             child: Row(
               children: [
-                Text(
-                  '${ads.length} ${l10n.commonAds}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSecondary,
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search',
+                      prefixIcon: const Icon(Icons.search),
+                      filled: true,
+                      fillColor: AppColors.backgroundGray,
+                      border: OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(AppConstants.radiusLarge),
+                        borderSide: BorderSide.none,
                       ),
-                ),
-                const Spacer(),
-                // Sort Dropdown
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppConstants.spacing12,
-                    vertical: AppConstants.spacing4,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: AppConstants.spacing16R,
+                        vertical: AppConstants.spacing12R,
+                      ),
+                    ),
+                    onSubmitted: (value) {
+                      setState(() {
+                        searchTerm = value.isEmpty ? null : value;
+                      });
+                      ref.invalidate(subcategoryOffersProvider(filterParams));
+                    },
                   ),
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundGray,
-                    borderRadius:
-                        BorderRadius.circular(AppConstants.radiusLarge),
-                  ),
-                  // child: DropdownButtonHideUnderline(
-                  //   child: DropdownButton<String>(
-                  //     value: _sortBy,
-                  //     icon: const Icon(Icons.arrow_drop_down),
-                  //     isDense: true,
-                  //     items: [
-                  //       DropdownMenuItem(
-                  //         value: 'newest',
-                  //         child: Text('Newest First'),
-                  //       ),
-                  //       DropdownMenuItem(
-                  //         value: 'price_low',
-                  //         child: Text('Price: Low to High'),
-                  //       ),
-                  //       DropdownMenuItem(
-                  //         value: 'price_high',
-                  //         child: Text('Price: High to Low'),
-                  //       ),
-                  //     ],
-                  //     onChanged: (value) {
-                  //       setState(() {
-                  //         _sortBy = value!;
-                  //       });
-                  //     },
-                  //   ),
-                  // ),
                 ),
+                if (hasActiveFilters) ...[
+                  SizedBox(width: AppConstants.spacing8R),
+                  TextButton(
+                    onPressed: _clearFilters,
+                    child: Text(
+                      'Clear',
+                      style: TextStyle(
+                        color: AppColors.error,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
 
-          // Ads Grid
-          Expanded(
-            child: ads.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.inventory_2_outlined,
-                          size: 64,
-                          color: AppColors.textTertiary,
-                        ),
-                        const SizedBox(height: AppConstants.spacing16),
-                        Text(
-                          'No ads found',
-                          style:
-                              Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    color: AppColors.textSecondary,
-                                  ),
-                        ),
-                        const SizedBox(height: AppConstants.spacing8),
-                        Text(
-                          'Try adjusting your filters',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: AppColors.textTertiary,
-                                  ),
-                        ),
-                      ],
-                    ),
-                  )
-                : Container(
-                    color: AppColors.backgroundWhite,
-                    child: GridView.builder(
-                      padding: const EdgeInsets.all(AppConstants.spacing16),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: AppConstants.spacing12,
-                        mainAxisSpacing: AppConstants.spacing12,
-                        childAspectRatio:
-                            0.85, // Increased for more height to fit content properly
+          // Active Filters Display
+          if (hasActiveFilters)
+            Container(
+              color: AppColors.backgroundWhite,
+              padding: EdgeInsets.symmetric(
+                horizontal: AppConstants.spacing16R,
+                vertical: AppConstants.spacing8R,
+              ),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    if (selectedRegionId != null)
+                      _buildFilterChip(
+                        label: 'Region',
+                        onRemove: () {
+                          setState(() {
+                            selectedRegionId = null;
+                          });
+                          ref.invalidate(
+                              subcategoryOffersProvider(filterParams));
+                        },
                       ),
-                      itemCount: ads.length,
-                      itemBuilder: (context, index) {
-                        return AdCard(ad: ads[index]);
-                      },
+                    if (minPrice != null || maxPrice != null)
+                      _buildFilterChip(
+                        label:
+                            'Price: ${minPrice ?? 0} - ${maxPrice ?? '∞'} QAR',
+                        onRemove: () {
+                          setState(() {
+                            minPrice = null;
+                            maxPrice = null;
+                          });
+                          ref.invalidate(
+                              subcategoryOffersProvider(filterParams));
+                        },
+                      ),
+                    if (searchTerm != null && searchTerm!.isNotEmpty)
+                      _buildFilterChip(
+                        label: 'Search: "$searchTerm"',
+                        onRemove: () {
+                          setState(() {
+                            searchTerm = null;
+                            _searchController.clear();
+                          });
+                          ref.invalidate(
+                              subcategoryOffersProvider(filterParams));
+                        },
+                      ),
+                  ],
+                ),
+              ),
+            ),
+
+          // Offers List
+          Expanded(
+            child: Container(
+              color: AppColors.backgroundWhite,
+              padding: EdgeInsets.all(AppConstants.spacing16R),
+              child: _buildOffersList(offersState, l10n, filterParams),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterChip({
+    required String label,
+    required VoidCallback onRemove,
+  }) {
+    return Container(
+      margin: EdgeInsets.only(right: AppConstants.spacing8R),
+      child: Chip(
+        label: Text(
+          label,
+          style: TextStyle(fontSize: 12.sp),
+        ),
+        deleteIcon: Icon(
+          Icons.close,
+          size: 16.sp,
+        ),
+        onDeleted: onRemove,
+        backgroundColor: AppColors.primaryAccent.withOpacity(0.1),
+        side: BorderSide(
+          color: AppColors.primaryAccent.withOpacity(0.3),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOffersList(
+    OffersState offersState,
+    AppLocalizations l10n,
+    SubcategoryFilterParams filterParams,
+  ) {
+    if (offersState.error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 48.sp,
+              color: AppColors.error,
+            ),
+            SizedBox(height: AppConstants.spacing8R),
+            Text(
+              offersState.error!,
+              style: TextStyle(
+                color: AppColors.error,
+                fontSize: 14.sp,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: AppConstants.spacing16R),
+            OutlinedButton(
+              onPressed: () {
+                ref
+                    .read(subcategoryOffersProvider(filterParams).notifier)
+                    .refresh();
+              },
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (offersState.offers.isEmpty && offersState.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(
+          color: AppColors.primaryAccent,
+        ),
+      );
+    }
+
+    if (offersState.offers.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.inventory_2_outlined,
+              size: 64.sp,
+              color: AppColors.textTertiary,
+            ),
+            SizedBox(height: AppConstants.spacing16R),
+            Text(
+              'No ads found',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 16.sp,
+              ),
+            ),
+            if (hasActiveFilters) ...[
+              SizedBox(height: AppConstants.spacing8R),
+              TextButton(
+                onPressed: _clearFilters,
+                child: Text(
+                  'Clear filters and try again',
+                  style: TextStyle(
+                    color: AppColors.primaryAccent,
+                    fontSize: 14.sp,
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        Expanded(
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: AppConstants.spacing12R,
+              mainAxisSpacing: AppConstants.spacing12R,
+              childAspectRatio: 0.85,
+            ),
+            itemCount: offersState.offers.length,
+            itemBuilder: (context, index) {
+              final ad = _convertOfferToAdSmall(offersState.offers[index]);
+              return AdCard(ad: ad);
+            },
+          ),
+        ),
+        if (offersState.hasMore) ...[
+          SizedBox(height: AppConstants.spacing16R),
+          Center(
+            child: offersState.isLoading
+                ? const CircularProgressIndicator(
+                    color: AppColors.primaryAccent,
+                  )
+                : OutlinedButton(
+                    onPressed: () {
+                      ref
+                          .read(
+                              subcategoryOffersProvider(filterParams).notifier)
+                          .loadMoreOffers();
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 32.w,
+                        vertical: 12.h,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                    ),
+                    child: Text(
+                      l10n.commonSeeMore,
+                      style: TextStyle(fontSize: 14.sp),
                     ),
                   ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.goNamed('postAd');
-        },
-        backgroundColor: AppColors.primaryAccent,
-        child: const Icon(Icons.add),
-      ),
+      ],
     );
-  }
-
-  void _showFilterBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.backgroundWhite,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppConstants.radiusXLarge),
-        ),
-      ),
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            return DraggableScrollableSheet(
-              initialChildSize: 0.7,
-              minChildSize: 0.5,
-              maxChildSize: 0.9,
-              expand: false,
-              builder: (context, scrollController) {
-                return Padding(
-                  padding: const EdgeInsets.all(AppConstants.spacing24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Handle
-                      Center(
-                        child: Container(
-                          width: 40,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: AppColors.borderLight,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: AppConstants.spacing24),
-
-                      // Title
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Filters',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineSmall
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              setModalState(() {
-                                _filterLocation = 'all';
-                                _priceRange = const RangeValues(0, 10000);
-                              });
-                            },
-                            child: const Text('Reset'),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppConstants.spacing24),
-
-                      Expanded(
-                        child: ListView(
-                          controller: scrollController,
-                          children: [
-                            // Location Filter
-                            Text(
-                              'Location',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                            const SizedBox(height: AppConstants.spacing12),
-                            Wrap(
-                              spacing: AppConstants.spacing8,
-                              children: [
-                                _buildFilterChip(
-                                  'All Qatar',
-                                  _filterLocation == 'all',
-                                  () => setModalState(
-                                      () => _filterLocation = 'all'),
-                                ),
-                                _buildFilterChip(
-                                  'Doha',
-                                  _filterLocation == 'doha',
-                                  () => setModalState(
-                                      () => _filterLocation = 'doha'),
-                                ),
-                                _buildFilterChip(
-                                  'Al Rayyan',
-                                  _filterLocation == 'rayyan',
-                                  () => setModalState(
-                                      () => _filterLocation = 'rayyan'),
-                                ),
-                                _buildFilterChip(
-                                  'Al Wakrah',
-                                  _filterLocation == 'wakrah',
-                                  () => setModalState(
-                                      () => _filterLocation = 'wakrah'),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: AppConstants.spacing32),
-
-                            // Price Range
-                            Text(
-                              'Price Range (QAR)',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                            const SizedBox(height: AppConstants.spacing12),
-                            RangeSlider(
-                              values: _priceRange,
-                              min: 0,
-                              max: 10000,
-                              divisions: 20,
-                              labels: RangeLabels(
-                                _priceRange.start.toInt().toString(),
-                                _priceRange.end.toInt().toString(),
-                              ),
-                              onChanged: (values) {
-                                setModalState(() {
-                                  _priceRange = values;
-                                });
-                              },
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'QAR ${_priceRange.start.toInt()}',
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                                Text(
-                                  'QAR ${_priceRange.end.toInt()}',
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Apply Button
-                      const SizedBox(height: AppConstants.spacing24),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          setState(() {
-                            // Apply filters
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryAccent,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AppConstants.spacing16,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(AppConstants.radiusLarge),
-                          ),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            'Apply Filters',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildFilterChip(String label, bool isSelected, VoidCallback onTap) {
-    return FilterChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (_) => onTap(),
-      selectedColor: AppColors.primaryAccent.withOpacity(0.2),
-      checkmarkColor: AppColors.primaryAccent,
-    );
-  }
-
-  List<AdSmall> _getMockAds() {
-    return [
-      const AdSmall(
-        id: '1',
-        title: 'Toyota Camry 2022',
-        price: 85000,
-        image:
-            'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=400&fit=crop',
-        comments: 3,
-        likes: 12,
-        location: 'Doha',
-        timeAgo: '2 hours ago',
-      ),
-      const AdSmall(
-        id: '2',
-        title: 'Honda Accord 2021',
-        price: 75000,
-        image:
-            'https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=400&h=400&fit=crop',
-        comments: 5,
-        likes: 20,
-        location: 'Al Rayyan',
-        timeAgo: '5 hours ago',
-      ),
-      const AdSmall(
-        id: '3',
-        title: 'Nissan Altima 2023',
-        price: 65000,
-        image:
-            'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=400&h=400&fit=crop',
-        comments: 2,
-        likes: 8,
-        location: 'Al Wakrah',
-        timeAgo: '1 day ago',
-      ),
-    ];
   }
 }

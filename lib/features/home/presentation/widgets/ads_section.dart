@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/models/ad_small.dart';
+import '../../../../core/services/api_service.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../providers/offers_provider.dart';
+import '../../models/offer_model.dart';
 import 'ad_card.dart';
 
 class AdsSection extends ConsumerStatefulWidget {
@@ -16,23 +20,23 @@ class AdsSection extends ConsumerStatefulWidget {
 }
 
 class _AdsSectionState extends ConsumerState<AdsSection> {
-  static const int _adsPerPage = 10;
-  int _displayedAdsCount = _adsPerPage;
-
-  void _loadMoreAds() {
-    setState(() {
-      _displayedAdsCount += _adsPerPage;
-    });
+  AdSmall _convertOfferToAdSmall(OfferModel offer) {
+    return AdSmall(
+      id: offer.id.toString(),
+      title: offer.name,
+      price: offer.price,
+      image: '${ApiService.baseUrl}/uploads/${offer.mainImageUrl}',
+      comments: offer.numberOfComments,
+      likes: offer.numberOfFavorites,
+      location: offer.regionName,
+      timeAgo: timeago.format(offer.createdAt),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-
-    // Dummy data - in real app, this would come from a provider
-    final allAds = _getDummyAds();
-    final displayedAds = allAds.take(_displayedAdsCount).toList();
-    final hasMoreAds = _displayedAdsCount < allAds.length;
+    final offersState = ref.watch(offersProvider);
 
     return Container(
       color: AppColors.backgroundWhite,
@@ -62,489 +66,95 @@ class _AdsSectionState extends ConsumerState<AdsSection> {
             ],
           ),
           SizedBox(height: AppConstants.spacing16R),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: AppConstants.spacing12R,
-              mainAxisSpacing: AppConstants.spacing12R,
-              childAspectRatio:
-                  0.85, // Increased for more height to fit content properly
-            ),
-            itemCount: displayedAds.length,
-            itemBuilder: (context, index) {
-              return AdCard(ad: displayedAds[index]);
-            },
-          ),
-          if (hasMoreAds) ...[
-            SizedBox(height: AppConstants.spacing16R),
+          if (offersState.error != null)
             Center(
-              child: OutlinedButton(
-                onPressed: _loadMoreAds,
-                style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 32.w,
-                    vertical: 12.h,
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 48.sp,
+                    color: AppColors.error,
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
+                  SizedBox(height: AppConstants.spacing8R),
+                  Text(
+                    offersState.error!,
+                    style: TextStyle(
+                      color: AppColors.error,
+                      fontSize: 14.sp,
+                    ),
                   ),
-                ),
-                child: Text(
-                  l10n.commonSeeMore,
-                  style: TextStyle(fontSize: 14.sp),
+                  SizedBox(height: AppConstants.spacing16R),
+                  OutlinedButton(
+                    onPressed: () {
+                      ref.read(offersProvider.notifier).refresh();
+                    },
+                    child: Text(l10n.commonError),
+                  ),
+                ],
+              ),
+            )
+          else if (offersState.offers.isEmpty && offersState.isLoading)
+            const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primaryAccent,
+              ),
+            )
+          else if (offersState.offers.isEmpty)
+            Center(
+              child: Text(
+                'No ads available',
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 16.sp,
                 ),
               ),
+            )
+          else ...[
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: AppConstants.spacing12R,
+                mainAxisSpacing: AppConstants.spacing12R,
+                childAspectRatio: 0.85,
+              ),
+              itemCount: offersState.offers.length,
+              itemBuilder: (context, index) {
+                final ad = _convertOfferToAdSmall(offersState.offers[index]);
+                return AdCard(ad: ad);
+              },
             ),
+            if (offersState.hasMore) ...[
+              SizedBox(height: AppConstants.spacing16R),
+              Center(
+                child: offersState.isLoading
+                    ? const CircularProgressIndicator(
+                        color: AppColors.primaryAccent,
+                      )
+                    : OutlinedButton(
+                        onPressed: () {
+                          ref.read(offersProvider.notifier).loadMoreOffers();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 32.w,
+                            vertical: 12.h,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                        ),
+                        child: Text(
+                          l10n.commonSeeMore,
+                          style: TextStyle(fontSize: 14.sp),
+                        ),
+                      ),
+              ),
+            ],
           ],
         ],
       ),
     );
-  }
-
-  List<AdSmall> _getDummyAds() {
-    return [
-      const AdSmall(
-        id: '1',
-        title: 'iPhone 14 Pro Max 256GB',
-        price: 4500,
-        image:
-            'https://images.unsplash.com/photo-1696446701796-da61225697cc?w=400&h=400&fit=crop',
-        comments: 5,
-        likes: 15,
-        location: 'Doha',
-        timeAgo: '2 hours ago',
-      ),
-      const AdSmall(
-        id: '2',
-        title: 'Toyota Camry 2021',
-        price: 85000,
-        image:
-            'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=400&fit=crop',
-        comments: 12,
-        likes: 45,
-        location: 'Al Wakrah',
-        timeAgo: '5 hours ago',
-      ),
-      const AdSmall(
-        id: '3',
-        title: '2 BHK Apartment for Rent',
-        price: 5500,
-        image:
-            'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=400&fit=crop',
-        comments: 8,
-        likes: 23,
-        location: 'West Bay',
-        timeAgo: '1 day ago',
-      ),
-      const AdSmall(
-        id: '4',
-        title: 'Gaming PC RTX 4090',
-        price: 15000,
-        image:
-            'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400&h=400&fit=crop',
-        comments: 3,
-        likes: 18,
-        location: 'Al Sadd',
-        timeAgo: '2 days ago',
-      ),
-      const AdSmall(
-        id: '5',
-        title: 'Office Furniture Set',
-        price: 2500,
-        image:
-            'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=400&fit=crop',
-        comments: 2,
-        likes: 7,
-        location: 'Industrial Area',
-        timeAgo: '3 days ago',
-      ),
-      const AdSmall(
-        id: '6',
-        title: 'PlayStation 5 with Games',
-        price: 2800,
-        image:
-            'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&h=400&fit=crop',
-        comments: 15,
-        likes: 52,
-        location: 'Al Rayyan',
-        timeAgo: '3 days ago',
-      ),
-      const AdSmall(
-        id: '7',
-        title: '2 BHK Apartment for Rent',
-        price: 5500,
-        image:
-            'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=400&fit=crop',
-        comments: 8,
-        likes: 23,
-        location: 'West Bay',
-        timeAgo: '1 day ago',
-      ),
-      const AdSmall(
-        id: '8',
-        title: 'Gaming PC RTX 4090',
-        price: 15000,
-        image:
-            'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400&h=400&fit=crop',
-        comments: 3,
-        likes: 18,
-        location: 'Al Sadd',
-        timeAgo: '2 days ago',
-      ),
-      const AdSmall(
-        id: '9',
-        title: 'Office Furniture Set',
-        price: 2500,
-        image:
-            'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=400&fit=crop',
-        comments: 2,
-        likes: 7,
-        location: 'Industrial Area',
-        timeAgo: '3 days ago',
-      ),
-      const AdSmall(
-        id: '10',
-        title: 'PlayStation 5 with Games',
-        price: 2800,
-        image:
-            'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&h=400&fit=crop',
-        comments: 15,
-        likes: 52,
-        location: 'Al Rayyan',
-        timeAgo: '3 days ago',
-      ),
-      const AdSmall(
-        id: '11',
-        title: 'iPhone 14 Pro Max 256GB',
-        price: 4500,
-        image:
-            'https://images.unsplash.com/photo-1696446701796-da61225697cc?w=400&h=400&fit=crop',
-        comments: 5,
-        likes: 15,
-        location: 'Doha',
-        timeAgo: '2 hours ago',
-      ),
-      const AdSmall(
-        id: '12',
-        title: 'Toyota Camry 2021',
-        price: 85000,
-        image:
-            'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=400&fit=crop',
-        comments: 12,
-        likes: 45,
-        location: 'Al Wakrah',
-        timeAgo: '5 hours ago',
-      ),
-      const AdSmall(
-        id: '13',
-        title: '2 BHK Apartment for Rent',
-        price: 5500,
-        image:
-            'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=400&fit=crop',
-        comments: 8,
-        likes: 23,
-        location: 'West Bay',
-        timeAgo: '1 day ago',
-      ),
-      const AdSmall(
-        id: '14',
-        title: 'Gaming PC RTX 4090',
-        price: 15000,
-        image:
-            'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400&h=400&fit=crop',
-        comments: 3,
-        likes: 18,
-        location: 'Al Sadd',
-        timeAgo: '2 days ago',
-      ),
-      const AdSmall(
-        id: '15',
-        title: 'Office Furniture Set',
-        price: 2500,
-        image:
-            'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=400&fit=crop',
-        comments: 2,
-        likes: 7,
-        location: 'Industrial Area',
-        timeAgo: '3 days ago',
-      ),
-      const AdSmall(
-        id: '16',
-        title: 'PlayStation 5 with Games',
-        price: 2800,
-        image:
-            'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&h=400&fit=crop',
-        comments: 15,
-        likes: 52,
-        location: 'Al Rayyan',
-        timeAgo: '3 days ago',
-      ),
-      const AdSmall(
-        id: '17',
-        title: '2 BHK Apartment for Rent',
-        price: 5500,
-        image:
-            'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=400&fit=crop',
-        comments: 8,
-        likes: 23,
-        location: 'West Bay',
-        timeAgo: '1 day ago',
-      ),
-      const AdSmall(
-        id: '18',
-        title: 'Gaming PC RTX 4090',
-        price: 15000,
-        image:
-            'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400&h=400&fit=crop',
-        comments: 3,
-        likes: 18,
-        location: 'Al Sadd',
-        timeAgo: '2 days ago',
-      ),
-      const AdSmall(
-        id: '19',
-        title: 'Office Furniture Set',
-        price: 2500,
-        image:
-            'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=400&fit=crop',
-        comments: 2,
-        likes: 7,
-        location: 'Industrial Area',
-        timeAgo: '3 days ago',
-      ),
-      const AdSmall(
-        id: '20',
-        title: 'PlayStation 5 with Games',
-        price: 2800,
-        image:
-            'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&h=400&fit=crop',
-        comments: 15,
-        likes: 52,
-        location: 'Al Rayyan',
-        timeAgo: '3 days ago',
-      ),
-      const AdSmall(
-        id: '21',
-        title: 'iPhone 14 Pro Max 256GB',
-        price: 4500,
-        image:
-            'https://images.unsplash.com/photo-1696446701796-da61225697cc?w=400&h=400&fit=crop',
-        comments: 5,
-        likes: 15,
-        location: 'Doha',
-        timeAgo: '2 hours ago',
-      ),
-      const AdSmall(
-        id: '22',
-        title: 'Toyota Camry 2021',
-        price: 85000,
-        image:
-            'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=400&fit=crop',
-        comments: 12,
-        likes: 45,
-        location: 'Al Wakrah',
-        timeAgo: '5 hours ago',
-      ),
-      const AdSmall(
-        id: '23',
-        title: '2 BHK Apartment for Rent',
-        price: 5500,
-        image:
-            'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=400&fit=crop',
-        comments: 8,
-        likes: 23,
-        location: 'West Bay',
-        timeAgo: '1 day ago',
-      ),
-      const AdSmall(
-        id: '24',
-        title: 'Gaming PC RTX 4090',
-        price: 15000,
-        image:
-            'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400&h=400&fit=crop',
-        comments: 3,
-        likes: 18,
-        location: 'Al Sadd',
-        timeAgo: '2 days ago',
-      ),
-      const AdSmall(
-        id: '25',
-        title: 'Office Furniture Set',
-        price: 2500,
-        image:
-            'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=400&fit=crop',
-        comments: 2,
-        likes: 7,
-        location: 'Industrial Area',
-        timeAgo: '3 days ago',
-      ),
-      const AdSmall(
-        id: '26',
-        title: 'PlayStation 5 with Games',
-        price: 2800,
-        image:
-            'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&h=400&fit=crop',
-        comments: 15,
-        likes: 52,
-        location: 'Al Rayyan',
-        timeAgo: '3 days ago',
-      ),
-      const AdSmall(
-        id: '27',
-        title: '2 BHK Apartment for Rent',
-        price: 5500,
-        image:
-            'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=400&fit=crop',
-        comments: 8,
-        likes: 23,
-        location: 'West Bay',
-        timeAgo: '1 day ago',
-      ),
-      const AdSmall(
-        id: '28',
-        title: 'Gaming PC RTX 4090',
-        price: 15000,
-        image:
-            'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400&h=400&fit=crop',
-        comments: 3,
-        likes: 18,
-        location: 'Al Sadd',
-        timeAgo: '2 days ago',
-      ),
-      const AdSmall(
-        id: '29',
-        title: 'Office Furniture Set',
-        price: 2500,
-        image:
-            'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=400&fit=crop',
-        comments: 2,
-        likes: 7,
-        location: 'Industrial Area',
-        timeAgo: '3 days ago',
-      ),
-      const AdSmall(
-        id: '30',
-        title: 'PlayStation 5 with Games',
-        price: 2800,
-        image:
-            'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&h=400&fit=crop',
-        comments: 15,
-        likes: 52,
-        location: 'Al Rayyan',
-        timeAgo: '3 days ago',
-      ),
-      const AdSmall(
-        id: '31',
-        title: 'iPhone 14 Pro Max 256GB',
-        price: 4500,
-        image:
-            'https://images.unsplash.com/photo-1696446701796-da61225697cc?w=400&h=400&fit=crop',
-        comments: 5,
-        likes: 15,
-        location: 'Doha',
-        timeAgo: '2 hours ago',
-      ),
-      const AdSmall(
-        id: '32',
-        title: 'Toyota Camry 2021',
-        price: 85000,
-        image:
-            'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=400&fit=crop',
-        comments: 12,
-        likes: 45,
-        location: 'Al Wakrah',
-        timeAgo: '5 hours ago',
-      ),
-      const AdSmall(
-        id: '33',
-        title: '2 BHK Apartment for Rent',
-        price: 5500,
-        image:
-            'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=400&fit=crop',
-        comments: 8,
-        likes: 23,
-        location: 'West Bay',
-        timeAgo: '1 day ago',
-      ),
-      const AdSmall(
-        id: '34',
-        title: 'Gaming PC RTX 4090',
-        price: 15000,
-        image:
-            'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400&h=400&fit=crop',
-        comments: 3,
-        likes: 18,
-        location: 'Al Sadd',
-        timeAgo: '2 days ago',
-      ),
-      const AdSmall(
-        id: '35',
-        title: 'Office Furniture Set',
-        price: 2500,
-        image:
-            'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=400&fit=crop',
-        comments: 2,
-        likes: 7,
-        location: 'Industrial Area',
-        timeAgo: '3 days ago',
-      ),
-      const AdSmall(
-        id: '36',
-        title: 'PlayStation 5 with Games',
-        price: 2800,
-        image:
-            'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&h=400&fit=crop',
-        comments: 15,
-        likes: 52,
-        location: 'Al Rayyan',
-        timeAgo: '3 days ago',
-      ),
-      const AdSmall(
-        id: '37',
-        title: '2 BHK Apartment for Rent',
-        price: 5500,
-        image:
-            'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=400&fit=crop',
-        comments: 8,
-        likes: 23,
-        location: 'West Bay',
-        timeAgo: '1 day ago',
-      ),
-      const AdSmall(
-        id: '38',
-        title: 'Gaming PC RTX 4090',
-        price: 15000,
-        image:
-            'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400&h=400&fit=crop',
-        comments: 3,
-        likes: 18,
-        location: 'Al Sadd',
-        timeAgo: '2 days ago',
-      ),
-      const AdSmall(
-        id: '39',
-        title: 'Office Furniture Set',
-        price: 2500,
-        image:
-            'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=400&fit=crop',
-        comments: 2,
-        likes: 7,
-        location: 'Industrial Area',
-        timeAgo: '3 days ago',
-      ),
-      const AdSmall(
-        id: '40',
-        title: 'PlayStation 5 with Games',
-        price: 2800,
-        image:
-            'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&h=400&fit=crop',
-        comments: 15,
-        likes: 52,
-        location: 'Al Rayyan',
-        timeAgo: '3 days ago',
-      ),
-    ];
   }
 }

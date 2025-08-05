@@ -7,6 +7,10 @@ import 'shared/themes/app_theme.dart';
 import 'shared/routes/app_router.dart';
 import 'core/providers/locale_provider.dart';
 
+class App {
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+}
+
 class SahelApp extends ConsumerWidget {
   const SahelApp({super.key});
 

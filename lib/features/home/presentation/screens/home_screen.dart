@@ -6,6 +6,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/widgets/language_selection_dialog.dart';
+import '../../../auth/providers/auth_provider.dart';
 import '../widgets/banner_carousel.dart';
 import '../widgets/ads_section.dart';
 
@@ -15,6 +16,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final authState = ref.watch(authProvider);
 
     return Scaffold(
       backgroundColor: AppColors.primaryBg,
@@ -67,20 +69,48 @@ class HomeScreen extends ConsumerWidget {
                   CircleAvatar(
                     radius: 30.r,
                     backgroundColor: AppColors.backgroundWhite,
-                    child: Icon(
-                      Icons.person,
-                      size: 30.r,
-                      color: AppColors.primaryAccent,
-                    ),
+                    child: authState.user?.profilePhotoUrl != null &&
+                            authState.user!.profilePhotoUrl != 'placeholder.png'
+                        ? ClipOval(
+                            child: Image.network(
+                              authState.user!.profilePhotoUrl,
+                              width: 60.r,
+                              height: 60.r,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(
+                                  Icons.person,
+                                  size: 30.r,
+                                  color: AppColors.primaryAccent,
+                                );
+                              },
+                            ),
+                          )
+                        : Icon(
+                            Icons.person,
+                            size: 30.r,
+                            color: AppColors.primaryAccent,
+                          ),
                   ),
                   SizedBox(height: AppConstants.spacing16R),
                   Text(
-                    l10n.navLogin,
+                    authState.isAuthenticated && authState.user != null
+                        ? authState.user!.name
+                        : l10n.navLogin,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: AppColors.textWhite,
                           fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
                         ),
                   ),
+                  if (authState.isAuthenticated && authState.user != null)
+                    Text(
+                      authState.user!.phoneNumber,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppColors.textWhite.withOpacity(0.8),
+                            fontSize: 12.sp,
+                          ),
+                    ),
                 ],
               ),
             ),
@@ -185,6 +215,69 @@ class HomeScreen extends ConsumerWidget {
                 context.goNamed('contact');
               },
             ),
+            const Divider(),
+            if (authState.isAuthenticated)
+              ListTile(
+                leading: Icon(
+                  Icons.logout,
+                  size: AppConstants.iconSizeMediumR,
+                  color: AppColors.error,
+                ),
+                title: Text(
+                  l10n.profileLogout,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: AppColors.error,
+                  ),
+                ),
+                onTap: () async {
+                  Navigator.pop(context);
+                  // Show confirmation dialog
+                  final shouldLogout = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(l10n.profileLogout),
+                      content: const Text('Are you sure you want to logout?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text(l10n.commonCancel),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.error,
+                          ),
+                          child: Text(l10n.profileLogout),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (shouldLogout == true) {
+                    await ref.read(authProvider.notifier).logout();
+                  }
+                },
+              )
+            else
+              ListTile(
+                leading: Icon(
+                  Icons.login,
+                  size: AppConstants.iconSizeMediumR,
+                  color: AppColors.primaryAccent,
+                ),
+                title: Text(
+                  l10n.authSignIn,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: AppColors.primaryAccent,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  context.goNamed('login');
+                },
+              ),
           ],
         ),
       ),

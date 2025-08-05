@@ -53,23 +53,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             name: 'subcategory',
             builder: (context, state) {
               final categoryId = state.pathParameters['categoryId']!;
-              return SubcategoryScreen(subcategoryId: categoryId);
+              final title = state.uri.queryParameters['title'] ?? 'Category';
+              return SubcategoryScreen(
+                categoryId: categoryId,
+                title: title,
+              );
             },
-            routes: [
-              // Subcategory ads listing
-              GoRoute(
-                path: 'subcategory/:subcategoryId',
-                name: 'subcategoryAds',
-                builder: (context, state) {
-                  final categoryId = state.pathParameters['categoryId']!;
-                  final subcategoryId = state.pathParameters['subcategoryId']!;
-                  return SubcategoryScreen(
-                    subcategoryId: subcategoryId,
-                    categoryId: categoryId,
-                  );
-                },
-              ),
-            ],
           ),
 
           // Ad Details

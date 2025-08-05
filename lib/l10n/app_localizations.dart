@@ -404,6 +404,12 @@ abstract class AppLocalizations {
   /// **'See More'**
   String get commonSeeMore;
 
+  /// No description provided for @commonCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get commonCancel;
+
   /// No description provided for @footerDescription.
   ///
   /// In en, this message translates to:

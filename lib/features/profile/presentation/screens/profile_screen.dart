@@ -6,6 +6,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/locale_provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/widgets/language_selection_dialog.dart';
+import '../../../auth/providers/auth_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -13,6 +14,7 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final authState = ref.watch(authProvider);
 
     return Scaffold(
       backgroundColor: AppColors.primaryBg,
@@ -35,30 +37,101 @@ class ProfileScreen extends ConsumerWidget {
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: AppColors.primaryAccent,
-                    child: const Icon(
-                      Icons.person,
-                      size: 50,
-                      color: AppColors.textWhite,
-                    ),
+                    child: authState.user?.profilePhotoUrl != null &&
+                            authState.user!.profilePhotoUrl != 'placeholder.png'
+                        ? ClipOval(
+                            child: Image.network(
+                              authState.user!.profilePhotoUrl,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(
+                                  Icons.person,
+                                  size: 50,
+                                  color: AppColors.textWhite,
+                                );
+                              },
+                            ),
+                          )
+                        : const Icon(
+                            Icons.person,
+                            size: 50,
+                            color: AppColors.textWhite,
+                          ),
                   ),
                   const SizedBox(height: AppConstants.spacing16),
                   Text(
-                    'Guest User',
+                    authState.isAuthenticated && authState.user != null
+                        ? authState.user!.name
+                        : 'Guest User',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                   ),
-                  const SizedBox(height: AppConstants.spacing8),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      context.goNamed('login');
-                    },
-                    icon: const Icon(Icons.login),
-                    label: Text(l10n.authSignIn),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryAccent,
+                  if (authState.isAuthenticated && authState.user != null) ...[
+                    const SizedBox(height: AppConstants.spacing4),
+                    Text(
+                      authState.user!.phoneNumber,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
                     ),
-                  ),
+                  ],
+                  const SizedBox(height: AppConstants.spacing8),
+                  if (!authState.isAuthenticated)
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        context.goNamed('login');
+                      },
+                      icon: const Icon(Icons.login),
+                      label: Text(l10n.authSignIn),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryAccent,
+                      ),
+                    )
+                  else
+                    OutlinedButton.icon(
+                      onPressed: () async {
+                        // Show confirmation dialog
+                        final shouldLogout = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text(l10n.profileLogout),
+                            content:
+                                const Text('Are you sure you want to logout?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
+                                child: Text(l10n.commonCancel),
+                              ),
+                              ElevatedButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.error,
+                                ),
+                                child: Text(l10n.profileLogout),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (shouldLogout == true) {
+                          await ref.read(authProvider.notifier).logout();
+                          if (context.mounted) {
+                            context.goNamed('home');
+                          }
+                        }
+                      },
+                      icon: const Icon(Icons.logout),
+                      label: Text(l10n.profileLogout),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.error,
+                        side: const BorderSide(color: AppColors.error),
+                      ),
+                    ),
                 ],
               ),
             ),
