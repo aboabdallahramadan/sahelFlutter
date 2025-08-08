@@ -3,11 +3,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/services/api_service.dart';
+import '../../models/ad_detail_response.dart';
 
 class AdImagesGallery extends StatefulWidget {
-  final List<String> images;
+  final AdDetailResponse adDetails;
 
-  const AdImagesGallery({super.key, required this.images});
+  const AdImagesGallery({super.key, required this.adDetails});
 
   @override
   State<AdImagesGallery> createState() => _AdImagesGalleryState();
@@ -17,9 +19,15 @@ class _AdImagesGalleryState extends State<AdImagesGallery> {
   int _currentIndex = 0;
   final CarouselSliderController _controller = CarouselSliderController();
 
+  List<String> get allImages {
+    final images = <String>[widget.adDetails.mainImageUrl];
+    images.addAll(widget.adDetails.additionalImages);
+    return images;
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (widget.images.isEmpty) {
+    if (allImages.isEmpty) {
       return Container(
         height: 300,
         color: AppColors.backgroundGray,
@@ -36,7 +44,7 @@ class _AdImagesGalleryState extends State<AdImagesGallery> {
     return Stack(
       children: [
         CarouselSlider(
-          items: widget.images.map((image) => _buildImageItem(image)).toList(),
+          items: allImages.map((image) => _buildImageItem(image)).toList(),
           carouselController: _controller,
           options: CarouselOptions(
             height: 300,
@@ -48,16 +56,16 @@ class _AdImagesGalleryState extends State<AdImagesGallery> {
             },
           ),
         ),
-        
+
         // Indicators
-        if (widget.images.length > 1)
+        if (allImages.length > 1)
           Positioned(
             bottom: 20,
             left: 0,
             right: 0,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: widget.images.asMap().entries.map((entry) {
+              children: allImages.asMap().entries.map((entry) {
                 return GestureDetector(
                   onTap: () => _controller.animateToPage(entry.key),
                   child: Container(
@@ -75,7 +83,7 @@ class _AdImagesGalleryState extends State<AdImagesGallery> {
               }).toList(),
             ),
           ),
-        
+
         // Image Counter
         Positioned(
           top: 20,
@@ -90,7 +98,7 @@ class _AdImagesGalleryState extends State<AdImagesGallery> {
               borderRadius: BorderRadius.circular(AppConstants.radiusCircular),
             ),
             child: Text(
-              '${_currentIndex + 1}/${widget.images.length}',
+              '${_currentIndex + 1}/${allImages.length}',
               style: const TextStyle(
                 color: AppColors.textWhite,
                 fontSize: 14,
@@ -109,7 +117,7 @@ class _AdImagesGalleryState extends State<AdImagesGallery> {
         // TODO: Open full screen gallery
       },
       child: CachedNetworkImage(
-        imageUrl: imageUrl,
+        imageUrl: '${ApiService.baseUrl}/uploads/$imageUrl',
         fit: BoxFit.cover,
         width: double.infinity,
         height: 300,
@@ -132,4 +140,4 @@ class _AdImagesGalleryState extends State<AdImagesGallery> {
       ),
     );
   }
-} 
+}

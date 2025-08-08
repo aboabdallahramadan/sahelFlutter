@@ -21,11 +21,14 @@ import '../../features/profile/presentation/screens/notifications_screen.dart';
 import '../../features/static/presentation/screens/terms_screen.dart';
 import '../../features/static/presentation/screens/privacy_screen.dart';
 import '../../features/static/presentation/screens/contact_screen.dart';
+import '../../features/home/presentation/screens/search_screen.dart';
+import '../../app.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/splash',
     debugLogDiagnostics: true,
+    navigatorKey: App.navigatorKey,
     routes: [
       // Splash Screen
       GoRoute(
@@ -45,6 +48,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: 'categories',
             name: 'categories',
             builder: (context, state) => const CategoriesScreen(),
+          ),
+
+          // Search
+          GoRoute(
+            path: 'search',
+            name: 'search',
+            builder: (context, state) => const SearchScreen(),
           ),
 
           // Subcategory listing

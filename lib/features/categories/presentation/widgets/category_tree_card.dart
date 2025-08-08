@@ -134,12 +134,6 @@ class CategoryTreeCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (category.subCategories.isNotEmpty)
-                    Icon(
-                      Icons.expand_more,
-                      color: AppColors.textSecondary,
-                      size: AppConstants.iconSizeMediumR,
-                    ),
                 ],
               ),
             ),

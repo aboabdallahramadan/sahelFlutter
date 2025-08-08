@@ -1,97 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/models/ad_user.dart';
-import '../../../../l10n/app_localizations.dart';
+import '../../../../core/services/api_service.dart';
+import '../../models/ad_detail_response.dart';
 
 class UserProfileCard extends StatelessWidget {
-  final AdUser user;
+  final AdDetailResponse adDetails;
 
-  const UserProfileCard({super.key, required this.user});
+  const UserProfileCard({super.key, required this.adDetails});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-
     return Container(
       padding: const EdgeInsets.all(AppConstants.spacing16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Text(
-            l10n.adPostedBy,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          const SizedBox(height: AppConstants.spacing16),
-          Row(
-            children: [
-              // Avatar
-              CircleAvatar(
-                radius: 30,
-                backgroundColor: AppColors.backgroundGray,
-                backgroundImage:
-                    user.avatar != null ? NetworkImage(user.avatar!) : null,
-                child: user.avatar == null
-                    ? const Icon(
+          // Avatar
+          CircleAvatar(
+            radius: 30,
+            backgroundColor: AppColors.backgroundGray,
+            child: adDetails.providerProfilePhotoUrl != 'placeholder.png'
+                ? ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          '${ApiService.baseUrl}/uploads/${adDetails.providerProfilePhotoUrl}',
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover,
+                      errorWidget: (context, url, error) => const Icon(
                         Icons.person,
                         size: 30,
                         color: AppColors.textSecondary,
-                      )
-                    : null,
-              ),
-              const SizedBox(width: AppConstants.spacing16),
-
-              // User Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      user.name,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      ),
                     ),
-                    const SizedBox(height: AppConstants.spacing4),
+                  )
+                : const Icon(
+                    Icons.person,
+                    size: 30,
+                    color: AppColors.textSecondary,
+                  ),
+          ),
+          const SizedBox(width: AppConstants.spacing16),
+
+          // User Info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  adDetails.providerName,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: AppConstants.spacing4),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today_outlined,
+                      size: AppConstants.iconSizeSmall,
+                      color: AppColors.textSecondary,
+                    ),
+                    const SizedBox(width: AppConstants.spacing4),
                     Text(
-                      '${l10n.adMemberSince} ${user.memberSince}',
+                      'Member since ${DateTime.parse(adDetails.providerCreatedAt).year}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: AppColors.textSecondary,
                           ),
                     ),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          if (user.phoneNumber != null) ...[
-            const SizedBox(height: AppConstants.spacing16),
-            Container(
-              padding: const EdgeInsets.all(AppConstants.spacing12),
-              decoration: BoxDecoration(
-                color: AppColors.backgroundGray,
-                borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.phone,
-                    size: AppConstants.iconSizeSmall,
-                    color: AppColors.textSecondary,
-                  ),
-                  const SizedBox(width: AppConstants.spacing8),
-                  Text(
-                    user.phoneNumber!,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                ],
+
+          // View Profile Button
+          TextButton(
+            onPressed: () {
+              // TODO: Navigate to user profile
+            },
+            child: Text(
+              'View Profile',
+              style: TextStyle(
+                color: AppColors.primaryAccent,
+                fontWeight: FontWeight.w600,
               ),
             ),
-          ],
+          ),
         ],
       ),
     );

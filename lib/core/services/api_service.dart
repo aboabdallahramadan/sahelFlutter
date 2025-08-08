@@ -108,6 +108,9 @@ class _ErrorInterceptor extends Interceptor {
       if (context != null && context.mounted) {
         context.goNamed('login');
       }
+
+      // Don't propagate the error further since we've handled it
+      return;
     }
     handler.next(err);
   }

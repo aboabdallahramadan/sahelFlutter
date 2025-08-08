@@ -32,7 +32,7 @@ class HomeScreen extends ConsumerWidget {
               size: AppConstants.iconSizeMediumR,
             ),
             onPressed: () {
-              // TODO: Implement search
+              context.goNamed('search');
             },
           ),
           IconButton(

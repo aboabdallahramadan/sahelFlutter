@@ -4,18 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/models/ad.dart';
-import '../../../../core/models/ad_details.dart';
-import '../../../../core/models/ad_user.dart';
-import '../../../../core/models/ad_comment.dart';
-import '../../../../core/models/ad_small.dart';
-import '../../../../core/models/extra_info.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../widgets/ad_images_gallery.dart';
 import '../widgets/ad_info_section.dart';
 import '../widgets/user_profile_card.dart';
 import '../widgets/similar_ads_section.dart';
 import '../widgets/comments_section.dart';
+import '../../providers/ad_details_provider.dart';
+import '../../../auth/providers/auth_provider.dart';
+import '../../../chat/services/chat_service.dart';
 
 class AdDetailsScreen extends ConsumerWidget {
   final String adId;
@@ -32,18 +29,48 @@ class AdDetailsScreen extends ConsumerWidget {
     }
   }
 
-  void _navigateToChat(BuildContext context, String adId, String sellerId) {
-    // Generate a unique chat ID based on ad and seller
-    final chatId = '${adId}_$sellerId';
-    context.goNamed('chat', pathParameters: {'chatId': chatId});
+  Future<void> _navigateToChat(
+      BuildContext context, WidgetRef ref, int providerId) async {
+    // Check if user is authenticated
+    final authState = ref.read(authProvider);
+    if (!authState.isAuthenticated) {
+      context.goNamed('login');
+      return;
+    }
+
+    try {
+      final chatService = ref.read(chatServiceProvider);
+      final response = await chatService.createOrGetChat(providerId);
+
+      if (response.success && response.data != null && context.mounted) {
+        context.goNamed('chat', pathParameters: {
+          'chatId': response.data!.id.toString(),
+        });
+      } else if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-
-    // In real app, this would come from a provider
-    final ad = _getDummyAd();
+    final adDetailsAsync = ref.watch(adDetailsProvider(int.parse(adId)));
+    final isFavorite = ref.watch(favoriteNotifierProvider(int.parse(adId)));
 
     return Scaffold(
       backgroundColor: AppColors.primaryBg,
@@ -54,172 +81,184 @@ class AdDetailsScreen extends ConsumerWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.favorite_border),
-            onPressed: () {
-              // TODO: Implement favorite
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: isFavorite ? AppColors.error : null,
+            ),
+            onPressed: () async {
+              // Check if user is authenticated first
+              final authState = ref.read(authProvider);
+              if (!authState.isAuthenticated) {
+                context.goNamed('login');
+                return;
+              }
+
+              try {
+                await ref
+                    .read(favoriteNotifierProvider(int.parse(adId)).notifier)
+                    .toggleFavorite();
+              } catch (e) {
+                // If we get here with a 401, the interceptor should have redirected
+                // but just in case, let's handle it
+                if (e.toString().contains('401')) {
+                  if (context.mounted) {
+                    context.goNamed('login');
+                  }
+                }
+              }
             },
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Image Gallery
-            AdImagesGallery(images: ad.images),
-
-            Container(
-              color: AppColors.backgroundWhite,
+      body: adDetailsAsync.when(
+        data: (adDetails) {
+          if (adDetails == null) {
+            return Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Ad Information
-                  AdInfoSection(adDetails: ad.adDetails),
-
-                  const Divider(),
-
-                  // User Profile Card
-                  UserProfileCard(user: ad.user),
-
-                  const Divider(),
-
-                  // Similar Ads
-                  SimilarAdsSection(ads: ad.similarAds),
-
-                  const Divider(),
-
-                  // Comments Section
-                  CommentsSection(comments: ad.comments),
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: AppColors.textTertiary,
+                  ),
+                  const SizedBox(height: AppConstants.spacing16),
+                  Text(
+                    'Ad not found',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(AppConstants.spacing16),
-        decoration: BoxDecoration(
-          color: AppColors.backgroundWhite,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadowLight,
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: ad.user.phoneNumber != null
-                    ? () => _makePhoneCall(ad.user.phoneNumber!)
-                    : null,
-                icon: const Icon(Icons.phone),
-                label: const Text('Call'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.primaryAccent,
-                  side: const BorderSide(color: AppColors.primaryAccent),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: AppConstants.spacing12,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: AppConstants.spacing12),
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: () => _navigateToChat(context, adId, ad.user.id),
-                icon: const Icon(Icons.chat_bubble_outline),
-                label: const Text('Chat'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryAccent,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: AppConstants.spacing12,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+            );
+          }
 
-  Ad _getDummyAd() {
-    return Ad(
-      id: '1',
-      images: [
-        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1549924231-f129b911e442?w=800&h=600&fit=crop',
-      ],
-      adDetails: AdDetails(
-        title: 'Hiring driver. snoonu. carcon',
-        price: 6000,
-        category: 'Jobs',
-        subcategory: 'Drivers',
-        location: 'Doha',
-        timeAgo: '1 week ago',
-        extraInfo: [
-          ExtraInfo(name: 'Ad Type', value: 'Job Offer'),
-          ExtraInfo(name: 'Gender', value: 'Both'),
-          ExtraInfo(name: 'Nationality', value: 'Any'),
-          ExtraInfo(name: 'Experience', value: '3 years'),
-          ExtraInfo(name: 'Salary', value: 'Commission'),
-        ],
-        likes: 5,
-        views: 15482,
-        description:
-            'Hiring male and female drivers with their own cars. Quick registration. Reliable delivery services at Al-Hadaf Delivery Services Company. Available Jobs: Drivers with their own cars 200 vacancies. Application fee: 14 riyals.',
-      ),
-      user: AdUser(
-        id: '1',
-        name: 'Mohammad Al-Haj',
-        avatar:
-            'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face',
-        memberSince: '11 months ago',
-        phoneNumber: '74036872',
-      ),
-      comments: [
-        AdComment(
-          id: '1',
-          user: CommentUser(
-            name: 'Abdul Faheem',
-            avatar:
-                'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face',
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                // Image Gallery
+                AdImagesGallery(adDetails: adDetails),
+
+                Container(
+                  color: AppColors.backgroundWhite,
+                  child: Column(
+                    children: [
+                      // Ad Information
+                      AdInfoSection(adDetails: adDetails),
+
+                      const Divider(),
+
+                      // User Profile Card
+                      UserProfileCard(adDetails: adDetails),
+
+                      const Divider(),
+
+                      // Similar Ads
+                      SimilarAdsSection(categoryId: adDetails.categoryId),
+
+                      const Divider(),
+
+                      // Comments Section
+                      CommentsSection(offerId: adDetails.id),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        loading: () => const Center(
+          child: CircularProgressIndicator(
+            color: AppColors.primaryAccent,
           ),
-          comment: '74036872',
-          timeAgo: '23 hours ago',
         ),
-        AdComment(
-          id: '2',
-          user: CommentUser(
-            name: 'MUHAMMAD HAYAT',
-            avatar:
-                'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face',
+        error: (error, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline,
+                size: 64,
+                color: AppColors.error,
+              ),
+              const SizedBox(height: AppConstants.spacing16),
+              Text(
+                'Error loading ad',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: AppConstants.spacing8),
+              Text(
+                error.toString(),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppConstants.spacing24),
+              ElevatedButton.icon(
+                onPressed: () {
+                  ref.invalidate(adDetailsProvider(int.parse(adId)));
+                },
+                icon: const Icon(Icons.refresh),
+                label: Text(l10n.commonRetry),
+              ),
+            ],
           ),
-          comment: 'Interested in this position',
-          timeAgo: '1 day ago',
         ),
-      ],
-      similarAds: [
-        AdSmall(
-          id: '1',
-          title: 'Hiring driver. snoonu. carcon',
-          price: 6000,
-          image:
-              'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop',
-          comments: 10,
-          likes: 100,
-        ),
-        AdSmall(
-          id: '2',
-          title: 'Driver needed for delivery',
-          price: 5500,
-          image:
-              'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop',
-          comments: 5,
-          likes: 50,
-        ),
-      ],
+      ),
+      bottomNavigationBar: adDetailsAsync.maybeWhen(
+        data: (adDetails) {
+          if (adDetails == null) return null;
+
+          return Container(
+            padding: const EdgeInsets.all(AppConstants.spacing16),
+            decoration: BoxDecoration(
+              color: AppColors.backgroundWhite,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.shadowLight,
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () =>
+                        _makePhoneCall(adDetails.providerPhoneNumber),
+                    icon: const Icon(Icons.phone),
+                    label: const Text('Call'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.primaryAccent,
+                      side: const BorderSide(color: AppColors.primaryAccent),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppConstants.spacing12,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AppConstants.spacing12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () =>
+                        _navigateToChat(context, ref, adDetails.providerId),
+                    icon: const Icon(Icons.chat_bubble_outline),
+                    label: const Text('Chat'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryAccent,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppConstants.spacing12,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        orElse: () => null,
+      ),
     );
   }
 }

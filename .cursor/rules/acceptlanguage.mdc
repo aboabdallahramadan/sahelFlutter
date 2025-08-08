@@ -1,0 +1,7 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+in every api request we send to the back end we should send Accept-Language
+as a string in the header and it should be en or ar depending on the app language the user has set

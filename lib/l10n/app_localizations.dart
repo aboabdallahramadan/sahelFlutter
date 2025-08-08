@@ -410,6 +410,12 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get commonCancel;
 
+  /// No description provided for @commonRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get commonRetry;
+
   /// No description provided for @footerDescription.
   ///
   /// In en, this message translates to:
