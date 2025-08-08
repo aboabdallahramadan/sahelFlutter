@@ -3,8 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/models/chat.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../auth/providers/auth_provider.dart';
+import '../providers/chat_provider.dart';
+import '../../data/models/chat_messages_response.dart';
+import '../../data/models/chat_list_response.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   final String chatId;
@@ -18,83 +21,48 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
-  final bool _isTyping = false;
+  ChatListItem? _otherUser;
 
-  // Mock data - in real app this would come from a provider
-  final List<Message> _messages = [
-    Message(
-      id: '1',
-      chatId: '1',
-      senderId: '2',
-      content: 'Hello! I saw your ad for the Toyota Camry. Is it still available?',
-      timestamp: DateTime.now().subtract(const Duration(hours: 2)),
-      isRead: true,
-    ),
-    Message(
-      id: '2',
-      chatId: '1',
-      senderId: '1',
-      content: 'Yes, it is still available. Would you like to know more details?',
-      timestamp: DateTime.now().subtract(const Duration(hours: 1, minutes: 30)),
-      isRead: true,
-    ),
-    Message(
-      id: '3',
-      chatId: '1',
-      senderId: '2',
-      content: 'Yes, please. What is the condition of the car? Has it been in any accidents?',
-      timestamp: DateTime.now().subtract(const Duration(hours: 1)),
-      isRead: true,
-    ),
-    Message(
-      id: '4',
-      chatId: '1',
-      senderId: '1',
-      content: 'The car is in excellent condition. No accidents, regular maintenance, and all documents are available.',
-      timestamp: DateTime.now().subtract(const Duration(minutes: 45)),
-      isRead: true,
-    ),
-    Message(
-      id: '5',
-      chatId: '1',
-      senderId: '2',
-      content: 'That sounds great! Can we schedule a time to see the car?',
-      timestamp: DateTime.now().subtract(const Duration(minutes: 30)),
-      isRead: true,
-    ),
-    Message(
-      id: '6',
-      chatId: '1',
-      senderId: '1',
-      content: 'Of course! I am free tomorrow after 3 PM. Where would you like to meet?',
-      timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
-      isRead: false,
-    ),
-  ];
-
-  final Chat _mockChat = Chat(
-    id: '1',
-    participants: const [
-      Participant(id: '1', name: 'You'),
-      Participant(
-        id: '2',
-        name: 'Ahmed Mohammed',
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face',
-      ),
-    ],
-    lastMessage: 'Of course! I am free tomorrow after 3 PM.',
-    lastMessageTime: DateTime.now().subtract(const Duration(minutes: 5)),
-    unreadCount: 0,
-    createdAt: DateTime.now().subtract(const Duration(days: 1)),
-    updatedAt: DateTime.now().subtract(const Duration(minutes: 5)),
-  );
+  int get _chatId => int.parse(widget.chatId);
 
   @override
   void initState() {
     super.initState();
+    // Load messages when screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToBottom();
+      _loadChatInfo();
+      _loadMessages().then((_) {
+        // Scroll to bottom after messages are loaded
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted && _scrollController.hasClients) {
+            _scrollToBottom();
+          }
+        });
+      });
     });
+  }
+
+  void _loadChatInfo() {
+    // Find chat info from the chat list
+    final chatListState = ref.read(chatListProvider);
+    final chat = chatListState.chats.firstWhere(
+      (chat) => chat.id == _chatId,
+      orElse: () => ChatListItem(
+          id: _chatId,
+          user: const ChatUserInfo(
+            id: 0,
+            name: 'Unknown',
+            phoneNumber: '',
+            profilePhotoUrl: '',
+          )),
+    );
+    setState(() {
+      _otherUser = chat;
+    });
+  }
+
+  Future<void> _loadMessages() async {
+    await ref.read(chatMessagesProvider(_chatId).notifier).loadMessages();
   }
 
   @override
@@ -114,26 +82,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     }
   }
 
-  void _sendMessage() {
+  void _sendMessage() async {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
 
-    final newMessage = Message(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      chatId: widget.chatId,
-      senderId: '1',
-      content: text,
-      timestamp: DateTime.now(),
-      isRead: false,
-    );
+    _messageController.clear();
 
-    setState(() {
-      _messages.add(newMessage);
-      _messageController.clear();
-    });
+    await ref.read(chatMessagesProvider(_chatId).notifier).sendMessage(text);
 
+    // Scroll to bottom after sending message
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToBottom();
+      if (mounted && _scrollController.hasClients) {
+        _scrollToBottom();
+      }
     });
   }
 
@@ -146,7 +107,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final otherUser = _mockChat.participants.firstWhere((p) => p.id != '1');
+    final authState = ref.watch(authProvider);
+    final messagesState = ref.watch(chatMessagesProvider(_chatId));
+    final currentUserId = authState.user?.id;
+
+    // Check if user is authenticated
+    if (!authState.isAuthenticated || currentUserId == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.goNamed('login');
+      });
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: AppColors.primaryBg,
@@ -156,69 +131,207 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: AppColors.backgroundGray,
-              backgroundImage: otherUser.avatar != null
-                  ? NetworkImage(otherUser.avatar!)
-                  : null,
-              child: otherUser.avatar == null
-                  ? const Icon(
-                      Icons.person,
-                      size: 20,
-                      color: AppColors.textSecondary,
-                    )
-                  : null,
-            ),
-            const SizedBox(width: AppConstants.spacing12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        title: _otherUser != null
+            ? Row(
                 children: [
-                  Text(
-                    otherUser.name,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundColor: AppColors.backgroundGray,
+                    backgroundImage:
+                        _otherUser!.user.profilePhotoUrl.isNotEmpty &&
+                                _otherUser!.user.profilePhotoUrl !=
+                                    'placeholder.png'
+                            ? NetworkImage(_otherUser!.user.profilePhotoUrl)
+                            : null,
+                    child: _otherUser!.user.profilePhotoUrl.isEmpty ||
+                            _otherUser!.user.profilePhotoUrl ==
+                                'placeholder.png'
+                        ? const Icon(
+                            Icons.person,
+                            size: 20,
+                            color: AppColors.textSecondary,
+                          )
+                        : null,
+                  ),
+                  const SizedBox(width: AppConstants.spacing12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _otherUser!.user.name,
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                        ),
+                      ],
                     ),
                   ),
-                  if (_isTyping)
-                    Text(
-                      l10n.chatTyping,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
                 ],
-              ),
-            ),
-          ],
-        ),
+              )
+            : const Text('Chat'),
       ),
       body: Column(
         children: [
           // Messages list
           Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(AppConstants.spacing16),
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final message = _messages[index];
-                final isMe = message.senderId == '1';
-                
-                return _buildMessageBubble(message, isMe);
-              },
-            ),
+            child: messagesState.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : messagesState.error != null
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              size: 64,
+                              color: AppColors.error,
+                            ),
+                            const SizedBox(height: AppConstants.spacing16),
+                            Text(
+                              'Error loading messages',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
+                            ),
+                            const SizedBox(height: AppConstants.spacing8),
+                            Text(
+                              messagesState.error!,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: AppColors.textTertiary,
+                                  ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: AppConstants.spacing24),
+                            ElevatedButton(
+                              onPressed: _loadMessages,
+                              child: const Text('Retry'),
+                            ),
+                          ],
+                        ),
+                      )
+                    : messagesState.messages.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.chat_bubble_outline,
+                                  size: 80,
+                                  color:
+                                      AppColors.textTertiary.withOpacity(0.5),
+                                ),
+                                const SizedBox(height: AppConstants.spacing16),
+                                Text(
+                                  l10n.chatNoMessages ?? 'No messages yet',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                        color: AppColors.textSecondary,
+                                      ),
+                                ),
+                                const SizedBox(height: AppConstants.spacing8),
+                                Text(
+                                  l10n.chatStartConversation ??
+                                      'Start a conversation!',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: AppColors.textTertiary,
+                                      ),
+                                ),
+                                const SizedBox(height: AppConstants.spacing32),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: AppConstants.spacing24,
+                                    vertical: AppConstants.spacing12,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.backgroundGray,
+                                    borderRadius: BorderRadius.circular(
+                                        AppConstants.radiusXLarge),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.arrow_downward,
+                                        size: 16,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                      const SizedBox(
+                                          width: AppConstants.spacing8),
+                                      Text(
+                                        l10n.chatTypeToStart ??
+                                            'Type a message below to start',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: AppColors.textSecondary,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            controller: _scrollController,
+                            padding:
+                                const EdgeInsets.all(AppConstants.spacing16),
+                            itemCount: messagesState.messages.length,
+                            itemBuilder: (context, index) {
+                              final message = messagesState.messages[index];
+                              final isMe = message.senderId == currentUserId;
+
+                              // Check if this is the first unread message for the current user
+                              bool showUnreadDivider = false;
+                              if (index > 0 && !isMe && !message.isRead) {
+                                final previousMessage =
+                                    messagesState.messages[index - 1];
+                                if (previousMessage.receiverId !=
+                                        currentUserId ||
+                                    previousMessage.isRead) {
+                                  showUnreadDivider = true;
+                                }
+                              } else if (index == 0 &&
+                                  !isMe &&
+                                  !message.isRead) {
+                                showUnreadDivider = true;
+                              }
+
+                              return Column(
+                                children: [
+                                  if (showUnreadDivider)
+                                    _buildUnreadDivider(context),
+                                  _buildMessageBubble(
+                                      message, isMe, currentUserId),
+                                ],
+                              );
+                            },
+                          ),
           ),
-          
+
           // Message input
           Container(
             padding: EdgeInsets.only(
               left: AppConstants.spacing16,
               right: AppConstants.spacing16,
-              bottom: MediaQuery.of(context).viewInsets.bottom + AppConstants.spacing16,
+              bottom: MediaQuery.of(context).viewInsets.bottom +
+                  AppConstants.spacing16,
               top: AppConstants.spacing16,
             ),
             decoration: BoxDecoration(
@@ -239,12 +352,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     maxLines: null,
                     textInputAction: TextInputAction.send,
                     onSubmitted: (_) => _sendMessage(),
+                    enabled: !messagesState.isSending,
                     decoration: InputDecoration(
                       hintText: l10n.chatTypeMessage,
                       filled: true,
                       fillColor: AppColors.backgroundGray,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(AppConstants.radiusXLarge),
+                        borderRadius:
+                            BorderRadius.circular(AppConstants.radiusXLarge),
                         borderSide: BorderSide.none,
                       ),
                       contentPadding: const EdgeInsets.symmetric(
@@ -256,15 +371,26 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 ),
                 const SizedBox(width: AppConstants.spacing8),
                 CircleAvatar(
-                  backgroundColor: AppColors.primaryAccent,
+                  backgroundColor: messagesState.isSending
+                      ? AppColors.textSecondary
+                      : AppColors.primaryAccent,
                   radius: 24,
-                  child: IconButton(
-                    onPressed: _sendMessage,
-                    icon: const Icon(
-                      Icons.send,
-                      color: AppColors.textWhite,
-                    ),
-                  ),
+                  child: messagesState.isSending
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: AppColors.textWhite,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : IconButton(
+                          onPressed: _sendMessage,
+                          icon: const Icon(
+                            Icons.send,
+                            color: AppColors.textWhite,
+                          ),
+                        ),
                 ),
               ],
             ),
@@ -274,11 +400,57 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-  Widget _buildMessageBubble(Message message, bool isMe) {
+  Widget _buildUnreadDivider(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: AppConstants.spacing16),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              height: 1,
+              color: AppColors.textTertiary.withOpacity(0.3),
+            ),
+          ),
+          Container(
+            margin:
+                const EdgeInsets.symmetric(horizontal: AppConstants.spacing12),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppConstants.spacing16,
+              vertical: AppConstants.spacing8,
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.primaryAccent.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
+              border: Border.all(
+                color: AppColors.primaryAccent.withOpacity(0.3),
+              ),
+            ),
+            child: Text(
+              'Unread messages',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppColors.primaryAccent,
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+          ),
+          Expanded(
+            child: Container(
+              height: 1,
+              color: AppColors.textTertiary.withOpacity(0.3),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageBubble(
+      ChatMessage message, bool isMe, int currentUserId) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppConstants.spacing12),
       child: Row(
-        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           Container(
             constraints: BoxConstraints(
@@ -293,9 +465,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               borderRadius: BorderRadius.only(
                 topLeft: const Radius.circular(AppConstants.radiusLarge),
                 topRight: const Radius.circular(AppConstants.radiusLarge),
-                bottomLeft: Radius.circular(isMe ? AppConstants.radiusLarge : 0),
-                bottomRight: Radius.circular(isMe ? 0 : AppConstants.radiusLarge),
+                bottomLeft:
+                    Radius.circular(isMe ? AppConstants.radiusLarge : 0),
+                bottomRight:
+                    Radius.circular(isMe ? 0 : AppConstants.radiusLarge),
               ),
+              border: !isMe && !message.isRead
+                  ? Border.all(
+                      color: AppColors.primaryAccent.withOpacity(0.5),
+                      width: 2,
+                    )
+                  : null,
               boxShadow: [
                 BoxShadow(
                   color: AppColors.shadowLight,
@@ -308,19 +488,46 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  message.content,
+                  message.message,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: isMe ? AppColors.textWhite : AppColors.textPrimary,
-                  ),
+                        color:
+                            isMe ? AppColors.textWhite : AppColors.textPrimary,
+                      ),
                 ),
                 const SizedBox(height: AppConstants.spacing4),
-                Text(
-                  _formatTime(message.timestamp),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: isMe 
-                        ? AppColors.textWhite.withOpacity(0.7)
-                        : AppColors.textTertiary,
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      _formatTime(message.date),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: isMe
+                                ? AppColors.textWhite.withOpacity(0.7)
+                                : AppColors.textTertiary,
+                          ),
+                    ),
+                    if (isMe) ...[
+                      const SizedBox(width: AppConstants.spacing4),
+                      Icon(
+                        message.isRead ? Icons.done_all : Icons.done,
+                        size: 14,
+                        color: message.isRead
+                            ? AppColors.textWhite
+                            : AppColors.textWhite.withOpacity(0.7),
+                      ),
+                    ],
+                    if (!isMe && !message.isRead) ...[
+                      const SizedBox(width: AppConstants.spacing4),
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryAccent,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ],
             ),
@@ -329,4 +536,4 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       ),
     );
   }
-} 
+}

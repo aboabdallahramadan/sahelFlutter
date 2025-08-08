@@ -263,6 +263,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chatNow => 'الآن';
 
   @override
+  String get chatNoMessages => 'لا يوجد رسائل';
+
+  @override
+  String get chatStartConversation => 'بدء المحادثة';
+
+  @override
+  String get chatTypeToStart => 'اكتب للبدء';
+
+  @override
   String chatMinutesAgo(int minutes) {
     return 'منذ $minutes دقيقة';
   }

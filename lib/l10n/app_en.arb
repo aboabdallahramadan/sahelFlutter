@@ -104,6 +104,9 @@
   "chatSearchChats": "Search conversations",
   "chatLoading": "Loading conversations...",
   "chatNow": "Just now",
+  "chatNoMessages": "No Messages",
+  "chatStartConversation": "Start Conversation",
+  "chatTypeToStart": "Type To Start",
   "chatMinutesAgo": "{minutes} min ago",
   "@chatMinutesAgo": {
     "placeholders": {

@@ -596,6 +596,24 @@ abstract class AppLocalizations {
   /// **'Just now'**
   String get chatNow;
 
+  /// No description provided for @chatNoMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'No Messages'**
+  String get chatNoMessages;
+
+  /// No description provided for @chatStartConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Conversation'**
+  String get chatStartConversation;
+
+  /// No description provided for @chatTypeToStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Type To Start'**
+  String get chatTypeToStart;
+
   /// No description provided for @chatMinutesAgo.
   ///
   /// In en, this message translates to:

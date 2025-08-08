@@ -104,6 +104,9 @@
   "chatSearchChats": "البحث في المحادثات",
   "chatLoading": "جاري تحميل المحادثات...",
   "chatNow": "الآن",
+  "chatNoMessages": "لا يوجد رسائل",
+  "chatStartConversation": "بدء المحادثة",
+  "chatTypeToStart": "اكتب للبدء",
   "chatMinutesAgo": "منذ {minutes} دقيقة",
   "@chatMinutesAgo": {
     "placeholders": {
