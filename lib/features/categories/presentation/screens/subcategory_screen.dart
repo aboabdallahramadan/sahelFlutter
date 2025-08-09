@@ -8,6 +8,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/models/ad_small.dart';
 import '../../../../core/services/api_service.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../shared/widgets/refresh_wrapper.dart';
 import '../../../../features/home/models/offer_model.dart';
 import '../../../../features/home/presentation/widgets/ad_card.dart';
 import '../../providers/subcategory_offers_provider.dart';
@@ -258,10 +259,18 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
 
           // Offers List
           Expanded(
-            child: Container(
-              color: AppColors.backgroundWhite,
-              padding: EdgeInsets.all(AppConstants.spacing16R),
-              child: _buildOffersList(offersState, l10n, filterParams),
+            child: RefreshWrapper(
+              onRefresh: () async {
+                // Refresh the offers list
+                await ref
+                    .refresh(subcategoryOffersProvider(filterParams).notifier)
+                    .refresh();
+              },
+              child: Container(
+                color: AppColors.backgroundWhite,
+                padding: EdgeInsets.all(AppConstants.spacing16R),
+                child: _buildOffersList(offersState, l10n, filterParams),
+              ),
             ),
           ),
         ],

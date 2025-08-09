@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/api_response.dart';
@@ -88,7 +89,7 @@ class AdsService {
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         // Auth interceptor will handle the redirect
-        throw e;
+        rethrow;
       }
       return ApiResponse(
         success: false,
@@ -119,7 +120,7 @@ class AdsService {
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         // Auth interceptor will handle the redirect
-        throw e;
+        rethrow;
       }
       return ApiResponse(
         success: false,
@@ -165,6 +166,72 @@ class AdsService {
         message: e.toString(),
         exception: '',
         stackTrace: '',
+      );
+    }
+  }
+
+  // Create a new offer (ad)
+  Future<ApiResponse<bool>> createOffer({
+    required String name,
+    required String description,
+    required double price,
+    required int categoryId,
+    required int regionId,
+    required List<File> images,
+  }) async {
+    try {
+      final formData = FormData();
+
+      formData.fields
+        ..add(MapEntry('Name', name))
+        ..add(MapEntry('Description', description))
+        ..add(MapEntry('Price', price.toString()))
+        ..add(MapEntry('CategoryId', categoryId.toString()))
+        ..add(MapEntry('RegionId', regionId.toString()));
+
+      for (final file in images) {
+        final fileName = file.path.split(Platform.pathSeparator).last;
+        formData.files.add(
+          MapEntry(
+            'Images',
+            await MultipartFile.fromFile(
+              file.path,
+              filename: fileName,
+            ),
+          ),
+        );
+      }
+
+      final response = await _dio.post(
+        '/api/offers/create',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+
+      final apiResponse = ApiResponse<bool>.fromJson(
+        response.data as Map<String, dynamic>,
+        (json) => true,
+      );
+
+      return apiResponse;
+    } on DioException catch (e) {
+      return ApiResponse<bool>(
+        data: null,
+        success: false,
+        message: e.response?.data is Map<String, dynamic>
+            ? (e.response?.data['message'] as String? ??
+                'Failed to create offer')
+            : 'Failed to create offer',
+        exception: e.toString(),
+        stackTrace: e.stackTrace.toString(),
+      );
+    } catch (e, st) {
+      return ApiResponse<bool>(
+        data: null,
+        success: false,
+        message: e.toString(),
+        exception: e.toString(),
+        stackTrace: st.toString(),
       );
     }
   }

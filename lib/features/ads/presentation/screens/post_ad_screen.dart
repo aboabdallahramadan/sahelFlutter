@@ -5,9 +5,13 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/models/category.dart';
-import '../../../../features/categories/providers/categories_provider.dart';
-import '../../../../l10n/app_localizations.dart';
+import '../../../../features/categories/providers/categories_api_provider.dart';
+import '../../../../features/categories/models/category_tree_model.dart';
+import '../../../../features/auth/providers/auth_provider.dart';
+import '../../../shared/providers/region_provider.dart';
+import '../../../shared/models/region_model.dart';
+import '../../services/ads_service.dart';
+import '../../../home/providers/offers_provider.dart';
 
 class PostAdScreen extends ConsumerStatefulWidget {
   const PostAdScreen({super.key});
@@ -21,9 +25,9 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
-  final _locationController = TextEditingController();
 
-  Category? _selectedCategory;
+  int? _selectedCategoryId;
+  int? _selectedRegionId;
   final List<File> _images = [];
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
@@ -33,7 +37,6 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
     _titleController.dispose();
     _descriptionController.dispose();
     _priceController.dispose();
-    _locationController.dispose();
     super.dispose();
   }
 
@@ -61,12 +64,27 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
     });
   }
 
-  void _submitAd() {
+  Future<void> _submitAd() async {
+    final authState = ref.read(authProvider);
+    if (!authState.isAuthenticated) {
+      if (mounted) context.goNamed('login');
+      return;
+    }
+
     if (_formKey.currentState!.validate()) {
-      if (_selectedCategory == null) {
+      if (_selectedCategoryId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Please select a category'),
+          ),
+        );
+        return;
+      }
+
+      if (_selectedRegionId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please select a region'),
           ),
         );
         return;
@@ -85,60 +103,74 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
         _isLoading = true;
       });
 
-      // TODO: Implement ad submission
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
+      try {
+        final service = ref.read(adsServiceProvider);
+        final price = double.parse(_priceController.text);
+        final response = await service.createOffer(
+          name: _titleController.text.trim(),
+          description: _descriptionController.text.trim(),
+          price: price,
+          categoryId: _selectedCategoryId!,
+          regionId: _selectedRegionId!,
+          images: _images,
+        );
 
+        if (!mounted) return;
+
+        setState(() {
+          _isLoading = false;
+        });
+
+        if (response.success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Ad posted successfully!'),
               backgroundColor: AppColors.success,
             ),
           );
-
-          context.go('/');
+          // Refresh offers before navigating
+          await ref.read(offersProvider.notifier).refresh();
+          if (mounted) context.go('/');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response.message),
+              backgroundColor: AppColors.error,
+            ),
+          );
         }
-      });
+      } catch (e) {
+        if (!mounted) return;
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
     }
   }
 
-  // Helper method to get localized category name
-  String _getCategoryName(AppLocalizations l10n, String nameKey) {
-    switch (nameKey) {
-      case 'categoryVehicles':
-        return l10n.categoriesVehicles;
-      case 'categoryElectronics':
-        return l10n.categoriesElectronics;
-      case 'categoryFurniture':
-        return l10n.categoriesFamilyNeeds; // Using family needs for furniture
-      case 'categoryFashion':
-        return l10n.categoriesOthers; // Using others for fashion
-      case 'categoryGames':
-        return l10n.categoriesOthers; // Using others for games
-      case 'categorySports':
-        return l10n.categoriesSport;
-      case 'categoryMaterials':
-        return l10n.categoriesOthers; // Using others for materials
-      case 'categoryJobs':
-        return l10n.categoriesJobs;
-      case 'categoryServices':
-        return l10n.categoriesServices;
-      case 'categoryAnimals':
-        return l10n.categoriesAnimals;
-      case 'categoryOther':
-        return l10n.categoriesOthers;
-      default:
-        return nameKey;
-    }
-  }
+  // No-op
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final categories = ref.watch(categoriesProvider);
+    final authState = ref.watch(authProvider);
+    if (!authState.isAuthenticated) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.goNamed('login');
+      });
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // final l10n = AppLocalizations.of(context);
+    final categoriesAsync = ref.watch(categoriesApiProvider);
+    final regionsAsync = ref.watch(regionsProvider);
 
     return Scaffold(
       backgroundColor: AppColors.primaryBg,
@@ -306,36 +338,74 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                     ),
                     const SizedBox(height: AppConstants.spacing16),
 
-                    // Category Dropdown
-                    DropdownButtonFormField<Category>(
-                      value: _selectedCategory,
-                      decoration: InputDecoration(
-                        labelText: 'Category *',
-                        filled: true,
-                        fillColor: AppColors.backgroundGray,
-                        border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(AppConstants.radiusLarge),
-                          borderSide: BorderSide.none,
+                    // Category Dropdown (from API)
+                    categoriesAsync.when(
+                      data: (categories) => DropdownButtonFormField<int>(
+                        value: _selectedCategoryId,
+                        decoration: InputDecoration(
+                          labelText: 'Category *',
+                          filled: true,
+                          fillColor: AppColors.backgroundGray,
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(AppConstants.radiusLarge),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
+                        items: _buildCategoryDropdownItems(categories),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedCategoryId = value;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please select a subcategory';
+                          }
+                          return null;
+                        },
                       ),
-                      items: categories.map((category) {
-                        return DropdownMenuItem(
-                          value: category,
-                          child: Text(category.title),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedCategory = value;
-                        });
-                      },
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please select a category';
-                        }
-                        return null;
-                      },
+                      loading: () =>
+                          const LinearProgressIndicator(minHeight: 2),
+                      error: (e, st) => const Text('Failed to load categories'),
+                    ),
+                    const SizedBox(height: AppConstants.spacing16),
+
+                    // Region Dropdown
+                    regionsAsync.when(
+                      data: (regions) => DropdownButtonFormField<int>(
+                        value: _selectedRegionId,
+                        decoration: InputDecoration(
+                          labelText: 'Region *',
+                          filled: true,
+                          fillColor: AppColors.backgroundGray,
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(AppConstants.radiusLarge),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        items: regions
+                            .map((r) => DropdownMenuItem(
+                                  value: r.id,
+                                  child: Text(_buildRegionName(r, regions)),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedRegionId = value;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please select a region';
+                          }
+                          return null;
+                        },
+                      ),
+                      loading: () =>
+                          const LinearProgressIndicator(minHeight: 2),
+                      error: (e, st) => const Text('Failed to load regions'),
                     ),
                     const SizedBox(height: AppConstants.spacing16),
 
@@ -369,7 +439,7 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                       controller: _priceController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: 'Price (QAR) *',
+                        labelText: 'Price (SAR) *',
                         filled: true,
                         fillColor: AppColors.backgroundGray,
                         border: OutlineInputBorder(
@@ -382,31 +452,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a price';
                         }
-                        if (int.tryParse(value) == null) {
+                        if (double.tryParse(value) == null) {
                           return 'Please enter a valid number';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: AppConstants.spacing16),
-
-                    // Location
-                    TextFormField(
-                      controller: _locationController,
-                      decoration: InputDecoration(
-                        labelText: 'Location *',
-                        filled: true,
-                        fillColor: AppColors.backgroundGray,
-                        border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(AppConstants.radiusLarge),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: const Icon(Icons.location_on_outlined),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a location';
                         }
                         return null;
                       },
@@ -448,7 +495,7 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: AppConstants.spacing16),
                 child: ElevatedButton(
-                  onPressed: _isLoading ? null : _submitAd,
+                  onPressed: _isLoading ? null : () => _submitAd(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryAccent,
                     padding: const EdgeInsets.symmetric(
@@ -485,5 +532,56 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
         ),
       ),
     );
+  }
+
+  String _buildRegionName(RegionModel region, List<RegionModel> allRegions) {
+    if (region.parentId == null) {
+      return region.name;
+    }
+
+    // Build hierarchical name
+    final parent = allRegions.firstWhere(
+      (r) => r.id == region.parentId,
+      orElse: () => region,
+    );
+
+    if (parent.id == region.id) {
+      return region.name;
+    }
+
+    return '${parent.name} > ${region.name}';
+  }
+
+  List<DropdownMenuItem<int>> _buildCategoryDropdownItems(
+      List<CategoryTreeModel> categories) {
+    final List<DropdownMenuItem<int>> items = [];
+
+    for (final category in categories) {
+      // Add category header (disabled)
+      items.add(DropdownMenuItem<int>(
+        value: null,
+        enabled: false,
+        child: Text(
+          category.name,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: AppColors.textSecondary,
+          ),
+        ),
+      ));
+
+      // Add subcategories (selectable)
+      for (final subcategory in category.subCategories) {
+        items.add(DropdownMenuItem<int>(
+          value: subcategory.id,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: Text(subcategory.name),
+          ),
+        ));
+      }
+    }
+
+    return items;
   }
 }

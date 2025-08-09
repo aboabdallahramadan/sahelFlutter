@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/api_response.dart';
 import '../../../core/services/api_service.dart';
 import '../models/slider_model.dart';
-import '../models/offer_model.dart';
 import '../models/offers_response.dart';
 
 class HomeService {

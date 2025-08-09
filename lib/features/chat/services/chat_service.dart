@@ -27,7 +27,7 @@ class ChatService {
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         // Auth interceptor will handle the redirect
-        throw e;
+        rethrow;
       }
       return ApiResponse(
         success: false,

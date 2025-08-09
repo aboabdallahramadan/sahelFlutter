@@ -19,6 +19,6 @@ final similarAdsProvider =
     return [];
   } catch (e) {
     // Re-throw the error so the FutureProvider can handle it properly
-    throw e;
+    rethrow;
   }
 });

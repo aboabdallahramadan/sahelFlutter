@@ -6,7 +6,10 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/widgets/language_selection_dialog.dart';
+import '../../../../shared/widgets/refresh_wrapper.dart';
 import '../../../auth/providers/auth_provider.dart';
+import '../../../home/providers/offers_provider.dart';
+import '../../../home/providers/sliders_provider.dart';
 import '../widgets/banner_carousel.dart';
 import '../widgets/ads_section.dart';
 
@@ -281,15 +284,25 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: const [
-            // Banner Carousel
-            BannerCarousel(),
+      body: RefreshWrapper(
+        onRefresh: () async {
+          // Refresh both offers and sliders
+          await Future.wait([
+            ref.read(offersProvider.notifier).refresh(),
+            ref.refresh(slidersProvider.future),
+          ]);
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: const [
+              // Banner Carousel
+              BannerCarousel(),
 
-            // Latest Ads Section
-            AdsSection(),
-          ],
+              // Latest Ads Section
+              AdsSection(),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(

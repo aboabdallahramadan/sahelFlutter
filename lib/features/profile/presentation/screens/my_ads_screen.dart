@@ -6,6 +6,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/models/ad_small.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../shared/widgets/refresh_wrapper.dart';
 import '../../../home/presentation/widgets/ad_card.dart';
 import '../../providers/my_ads_provider.dart';
 
@@ -41,7 +42,13 @@ class MyAdsScreen extends ConsumerWidget {
             return _buildEmptyState(context, l10n);
           }
 
-          return _buildAdsList(ads);
+          return RefreshWrapper(
+            onRefresh: () async {
+              // Refresh the my ads list
+              await ref.refresh(myAdsProvider.future);
+            },
+            child: _buildAdsList(ads),
+          );
         },
         loading: () => const Center(
           child: CircularProgressIndicator(),
@@ -129,22 +136,17 @@ class MyAdsScreen extends ConsumerWidget {
   }
 
   Widget _buildAdsList(List<AdSmall> ads) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        // Refresh the ads list
-        // In a real app, this would trigger a network request
+    return ListView.builder(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.all(AppConstants.spacing16),
+      itemCount: ads.length,
+      itemBuilder: (context, index) {
+        final ad = ads[index];
+        return Padding(
+          padding: EdgeInsets.only(bottom: AppConstants.spacing16),
+          child: _buildMyAdCard(ad),
+        );
       },
-      child: ListView.builder(
-        padding: EdgeInsets.all(AppConstants.spacing16),
-        itemCount: ads.length,
-        itemBuilder: (context, index) {
-          final ad = ads[index];
-          return Padding(
-            padding: EdgeInsets.only(bottom: AppConstants.spacing16),
-            child: _buildMyAdCard(ad),
-          );
-        },
-      ),
     );
   }
 
@@ -174,21 +176,6 @@ class MyAdsScreen extends ConsumerWidget {
             padding: EdgeInsets.all(AppConstants.spacing12),
             child: Row(
               children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      // Edit ad functionality
-                    },
-                    icon: Icon(Icons.edit, size: 16.r),
-                    label: Text('Edit'),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: AppColors.primaryAccent),
-                      foregroundColor: AppColors.primaryAccent,
-                    ),
-                  ),
-                ),
-                SizedBox(width: AppConstants.spacing8),
-                SizedBox(width: AppConstants.spacing8),
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () {

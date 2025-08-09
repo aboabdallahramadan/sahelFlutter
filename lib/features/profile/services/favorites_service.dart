@@ -55,7 +55,7 @@ class FavoritesService {
 
       final apiResponse = ApiResponse<void>.fromJson(
         response.data,
-        (_) => null,
+        (_) {},
       );
 
       return apiResponse;
@@ -79,7 +79,7 @@ class FavoritesService {
 
       final apiResponse = ApiResponse<void>.fromJson(
         response.data,
-        (_) => null,
+        (_) {},
       );
 
       return apiResponse;

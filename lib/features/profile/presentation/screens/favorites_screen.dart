@@ -6,6 +6,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/models/ad_small.dart';
 import '../../../../core/services/api_service.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../shared/widgets/refresh_wrapper.dart';
 import '../../../home/presentation/widgets/ad_card.dart';
 import '../../../auth/providers/auth_provider.dart';
 import '../../providers/favorites_provider.dart';
@@ -123,144 +124,150 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
             ),
         ],
       ),
-      body: Builder(
-        builder: (context) {
-          // Loading state
-          if (favoritesState.isLoading && favoritesState.offers.isEmpty) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          // Error state
-          if (favoritesState.error != null && favoritesState.offers.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: AppColors.error,
-                  ),
-                  const SizedBox(height: AppConstants.spacing16),
-                  Text(
-                    'Error loading favorites',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                  ),
-                  const SizedBox(height: AppConstants.spacing8),
-                  Text(
-                    favoritesState.error!,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textTertiary,
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: AppConstants.spacing24),
-                  ElevatedButton(
-                    onPressed: () {
-                      ref.read(favoritesProvider.notifier).refresh();
-                    },
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          // Empty state
-          if (favoritesState.offers.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.favorite_border,
-                    size: 64,
-                    color: AppColors.textTertiary,
-                  ),
-                  const SizedBox(height: AppConstants.spacing16),
-                  Text(
-                    'No favorites yet',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                  ),
-                  const SizedBox(height: AppConstants.spacing8),
-                  Text(
-                    'Start adding ads to your favorites',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textTertiary,
-                        ),
-                  ),
-                  const SizedBox(height: AppConstants.spacing24),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.goNamed('categories');
-                    },
-                    child: const Text('Browse Ads'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          // Favorites grid
-          return Container(
-            color: AppColors.backgroundWhite,
-            child: RefreshIndicator(
-              onRefresh: () => ref.read(favoritesProvider.notifier).refresh(),
-              child: GridView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.all(AppConstants.spacing16),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: AppConstants.spacing12,
-                  mainAxisSpacing: AppConstants.spacing12,
-                  childAspectRatio: 0.85,
-                ),
-                itemCount: favoritesState.offers.length +
-                    (favoritesState.isLoading && favoritesState.hasMore
-                        ? 1
-                        : 0),
-                itemBuilder: (context, index) {
-                  // Loading indicator at the end
-                  if (index == favoritesState.offers.length) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(AppConstants.spacing16),
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-
-                  final offer = favoritesState.offers[index];
-
-                  // Convert OfferModel to AdSmall for AdCard widget
-                  final adSmall = AdSmall(
-                    id: offer.id.toString(),
-                    title: offer.name,
-                    price: offer.price,
-                    image:
-                        '${ApiService.baseUrl}/uploads/${offer.mainImageUrl}',
-                    comments: offer.numberOfComments,
-                    likes: offer.numberOfFavorites,
-                    location: offer.regionName,
-                    timeAgo: _formatTimeAgo(offer.createdAt),
-                  );
-
-                  return Stack(
-                    children: [
-                      AdCard(ad: adSmall),
-                    ],
-                  );
-                },
-              ),
-            ),
-          );
+      body: RefreshWrapper(
+        onRefresh: () async {
+          // Refresh the favorites list
+          await ref.read(favoritesProvider.notifier).refresh();
         },
+        child: Builder(
+          builder: (context) {
+            // Loading state
+            if (favoritesState.isLoading && favoritesState.offers.isEmpty) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            // Error state
+            if (favoritesState.error != null && favoritesState.offers.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: AppColors.error,
+                    ),
+                    const SizedBox(height: AppConstants.spacing16),
+                    Text(
+                      'Error loading favorites',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                    ),
+                    const SizedBox(height: AppConstants.spacing8),
+                    Text(
+                      favoritesState.error!,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppColors.textTertiary,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: AppConstants.spacing24),
+                    ElevatedButton(
+                      onPressed: () {
+                        ref.read(favoritesProvider.notifier).refresh();
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            // Empty state
+            if (favoritesState.offers.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.favorite_border,
+                      size: 64,
+                      color: AppColors.textTertiary,
+                    ),
+                    const SizedBox(height: AppConstants.spacing16),
+                    Text(
+                      'No favorites yet',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                    ),
+                    const SizedBox(height: AppConstants.spacing8),
+                    Text(
+                      'Start adding ads to your favorites',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppColors.textTertiary,
+                          ),
+                    ),
+                    const SizedBox(height: AppConstants.spacing24),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.goNamed('categories');
+                      },
+                      child: const Text('Browse Ads'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            // Favorites grid
+            return Container(
+              color: AppColors.backgroundWhite,
+              child: RefreshIndicator(
+                onRefresh: () => ref.read(favoritesProvider.notifier).refresh(),
+                child: GridView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.all(AppConstants.spacing16),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: AppConstants.spacing12,
+                    mainAxisSpacing: AppConstants.spacing12,
+                    childAspectRatio: 0.85,
+                  ),
+                  itemCount: favoritesState.offers.length +
+                      (favoritesState.isLoading && favoritesState.hasMore
+                          ? 1
+                          : 0),
+                  itemBuilder: (context, index) {
+                    // Loading indicator at the end
+                    if (index == favoritesState.offers.length) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(AppConstants.spacing16),
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+
+                    final offer = favoritesState.offers[index];
+
+                    // Convert OfferModel to AdSmall for AdCard widget
+                    final adSmall = AdSmall(
+                      id: offer.id.toString(),
+                      title: offer.name,
+                      price: offer.price,
+                      image:
+                          '${ApiService.baseUrl}/uploads/${offer.mainImageUrl}',
+                      comments: offer.numberOfComments,
+                      likes: offer.numberOfFavorites,
+                      location: offer.regionName,
+                      timeAgo: _formatTimeAgo(offer.createdAt),
+                    );
+
+                    return Stack(
+                      children: [
+                        AdCard(ad: adSmall),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

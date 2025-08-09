@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../../core/services/api_service.dart';
+import '../../../../shared/widgets/refresh_wrapper.dart';
 import '../../providers/categories_api_provider.dart';
 import '../widgets/category_tree_card.dart';
 
@@ -33,127 +33,137 @@ class CategoriesScreen extends ConsumerWidget {
           final totalSubcategories = categories.fold<int>(
               0, (sum, category) => sum + category.subCategories.length);
 
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header Section
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(AppConstants.spacing16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.categoriesTitle,
-                        style:
-                            Theme.of(context).textTheme.headlineLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                      ),
-                      const SizedBox(height: AppConstants.spacing8),
-                      Text(
-                        l10n.categoriesDescription,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
-                      ),
-                      const SizedBox(height: AppConstants.spacing16),
+          return RefreshWrapper(
+            onRefresh: () async {
+              // Refresh categories
+              await ref.refresh(categoriesApiProvider.future);
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header Section
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(AppConstants.spacing16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.categoriesTitle,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        const SizedBox(height: AppConstants.spacing8),
+                        Text(
+                          l10n.categoriesDescription,
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
+                        ),
+                        const SizedBox(height: AppConstants.spacing16),
 
-                      // Summary Stats
-                      Container(
-                        padding: const EdgeInsets.all(AppConstants.spacing16),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryAccent.withOpacity(0.1),
-                          borderRadius:
-                              BorderRadius.circular(AppConstants.radiusLarge),
-                          border: Border.all(
-                            color: AppColors.primaryAccent.withOpacity(0.2),
+                        // Summary Stats
+                        Container(
+                          padding: const EdgeInsets.all(AppConstants.spacing16),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryAccent.withOpacity(0.1),
+                            borderRadius:
+                                BorderRadius.circular(AppConstants.radiusLarge),
+                            border: Border.all(
+                              color: AppColors.primaryAccent.withOpacity(0.2),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Column(
+                                children: [
+                                  Text(
+                                    '${categories.length}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.primaryAccent,
+                                        ),
+                                  ),
+                                  Text(
+                                    l10n.categoriesTitle,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: AppColors.textSecondary,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                width: 1,
+                                height: 40,
+                                color: AppColors.borderLight,
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    '$totalSubcategories',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.primaryAccent,
+                                        ),
+                                  ),
+                                  Text(
+                                    l10n.subcategoriesTitle,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: AppColors.textSecondary,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  '${categories.length}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.primaryAccent,
-                                      ),
-                                ),
-                                Text(
-                                  l10n.categoriesTitle,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        color: AppColors.textSecondary,
-                                      ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              width: 1,
-                              height: 40,
-                              color: AppColors.borderLight,
-                            ),
-                            Column(
-                              children: [
-                                Text(
-                                  '$totalSubcategories',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.primaryAccent,
-                                      ),
-                                ),
-                                Text(
-                                  l10n.subcategoriesTitle,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        color: AppColors.textSecondary,
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
-                // Categories Grid
-                Container(
-                  color: AppColors.backgroundWhite,
-                  padding: const EdgeInsets.all(AppConstants.spacing16),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: categories.length,
-                    itemBuilder: (context, index) {
-                      final category = categories[index];
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          bottom: index < categories.length - 1
-                              ? AppConstants.spacing12
-                              : 0,
-                        ),
-                        child: CategoryTreeCard(category: category),
-                      );
-                    },
+                  // Categories Grid
+                  Container(
+                    color: AppColors.backgroundWhite,
+                    padding: const EdgeInsets.all(AppConstants.spacing16),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: categories.length,
+                      itemBuilder: (context, index) {
+                        final category = categories[index];
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            bottom: index < categories.length - 1
+                                ? AppConstants.spacing12
+                                : 0,
+                          ),
+                          child: CategoryTreeCard(category: category),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
