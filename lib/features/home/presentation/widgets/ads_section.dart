@@ -88,7 +88,7 @@ class _AdsSectionState extends ConsumerState<AdsSection> {
                     onPressed: () {
                       ref.read(offersProvider.notifier).refresh();
                     },
-                    child: Text(l10n.commonError),
+                    child: Text(l10n.commonRetry),
                   ),
                 ],
               ),

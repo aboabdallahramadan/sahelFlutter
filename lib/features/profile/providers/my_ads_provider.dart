@@ -1,68 +1,72 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/config/app_config.dart';
 import '../../../core/models/ad_small.dart';
+import '../services/profile_service.dart';
+import '../models/user_profile.dart';
+
+// Provider for user profile data
+final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
+  final profileService = ref.watch(profileServiceProvider);
+  final result = await profileService.getCurrentUserProfile();
+
+  if (result.success && result.data != null) {
+    return result.data;
+  }
+
+  throw Exception(result.message);
+});
 
 // Provider for managing user's ads
 final myAdsProvider = FutureProvider<List<AdSmall>>((ref) async {
-  // Simulate network delay
-  await Future.delayed(const Duration(milliseconds: 800));
+  final userProfileAsync = await ref.watch(userProfileProvider.future);
 
-  // Mock data for user's ads
-  return [
-    const AdSmall(
-      id: 'user_ad_1',
-      title: 'iPhone 14 Pro Max - Excellent Condition',
-      price: 3500.0,
-      image:
-          'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400',
-      comments: 12,
-      likes: 25,
-      location: 'Doha, Qatar',
-      timeAgo: '2 days ago',
-    ),
-    const AdSmall(
-      id: 'user_ad_2',
-      title: 'MacBook Air M2 - Like New',
-      price: 4200.0,
-      image: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400',
-      comments: 8,
-      likes: 18,
-      location: 'Al Rayyan, Qatar',
-      timeAgo: '5 days ago',
-    ),
-    const AdSmall(
-      id: 'user_ad_3',
-      title: 'Toyota Camry 2023 - Low Mileage',
-      price: 85000.0,
-      image: 'https://images.unsplash.com/photo-1549924231-f129b911e442?w=400',
-      comments: 15,
-      likes: 32,
-      location: 'Lusail, Qatar',
-      timeAgo: '1 week ago',
-    ),
-    const AdSmall(
-      id: 'user_ad_4',
-      title: 'Samsung 75" Smart TV - Perfect for Home',
-      price: 2800.0,
-      image:
-          'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400',
-      comments: 6,
-      likes: 14,
-      location: 'West Bay, Qatar',
-      timeAgo: '2 weeks ago',
-    ),
-    const AdSmall(
-      id: 'user_ad_5',
-      title: 'Gaming Setup - RTX 4080, i9 Processor',
-      price: 12000.0,
-      image:
-          'https://images.unsplash.com/photo-1587831990711-23ca6441447b?w=400',
-      comments: 22,
-      likes: 45,
-      location: 'Al Wakrah, Qatar',
-      timeAgo: '3 weeks ago',
-    ),
-  ];
+  if (userProfileAsync == null) {
+    return [];
+  }
+
+  // Convert ProfileOffer to AdSmall
+  return userProfileAsync.offers.map((offer) {
+    return AdSmall(
+      id: offer.id.toString(),
+      title: offer.name,
+      price: offer.price,
+      image: '${AppConfig.apiBaseUrl}/uploads/${offer.mainImageUrl}',
+      comments: 0, // These values are not provided in the profile API
+      likes: 0,
+      location: offer.regionName,
+      timeAgo: _formatTimeAgo(offer.createdAt),
+    );
+  }).toList();
 });
+
+String _formatTimeAgo(String dateString) {
+  try {
+    final date = DateTime.parse(dateString);
+    final now = DateTime.now();
+    final difference = now.difference(date);
+
+    if (difference.inDays > 365) {
+      final years = (difference.inDays / 365).floor();
+      return '$years ${years == 1 ? 'year' : 'years'} ago';
+    } else if (difference.inDays > 30) {
+      final months = (difference.inDays / 30).floor();
+      return '$months ${months == 1 ? 'month' : 'months'} ago';
+    } else if (difference.inDays > 7) {
+      final weeks = (difference.inDays / 7).floor();
+      return '$weeks ${weeks == 1 ? 'week' : 'weeks'} ago';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'} ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'} ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'} ago';
+    } else {
+      return 'Just now';
+    }
+  } catch (e) {
+    return 'Recently';
+  }
+}
 
 // Provider for ad statistics (could be used for dashboard)
 final myAdsStatsProvider = Provider<Map<String, int>>((ref) {

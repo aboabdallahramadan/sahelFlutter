@@ -18,6 +18,8 @@ import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/screens/my_ads_screen.dart';
 import '../../features/profile/presentation/screens/favorites_screen.dart';
 import '../../features/profile/presentation/screens/notifications_screen.dart';
+import '../../features/profile/presentation/screens/followed_users_screen.dart';
+import '../../features/profile/presentation/screens/user_profile_screen.dart';
 import '../../features/static/presentation/screens/terms_screen.dart';
 import '../../features/static/presentation/screens/privacy_screen.dart';
 import '../../features/static/presentation/screens/contact_screen.dart';
@@ -118,7 +120,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 name: 'userProfile',
                 builder: (context, state) {
                   final userId = state.pathParameters['userId']!;
-                  return const Placeholder(); // UserProfileScreen(userId: userId)
+                  return UserProfileScreen(userId: userId);
                 },
               ),
             ],
@@ -129,6 +131,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: 'my-ads',
             name: 'myAds',
             builder: (context, state) => const MyAdsScreen(),
+          ),
+
+          // Followed Users
+          GoRoute(
+            path: 'followed-users',
+            name: 'followedUsers',
+            builder: (context, state) => const FollowedUsersScreen(),
           ),
 
           // Favorites

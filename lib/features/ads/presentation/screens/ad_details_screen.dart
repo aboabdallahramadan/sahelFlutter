@@ -69,6 +69,7 @@ class AdDetailsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final authState = ref.watch(authProvider);
     final adDetailsAsync = ref.watch(adDetailsProvider(int.parse(adId)));
     final isFavorite = ref.watch(favoriteNotifierProvider(int.parse(adId)));
 
@@ -79,36 +80,46 @@ class AdDetailsScreen extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: isFavorite ? AppColors.error : null,
-            ),
-            onPressed: () async {
-              // Check if user is authenticated first
-              final authState = ref.read(authProvider);
-              if (!authState.isAuthenticated) {
-                context.goNamed('login');
-                return;
-              }
+        actions: adDetailsAsync.maybeWhen(
+          data: (adDetails) {
+            if (adDetails == null) return [];
+            final isMyAd = authState.user?.id == adDetails.providerId;
+            if (isMyAd) return [];
 
-              try {
-                await ref
-                    .read(favoriteNotifierProvider(int.parse(adId)).notifier)
-                    .toggleFavorite();
-              } catch (e) {
-                // If we get here with a 401, the interceptor should have redirected
-                // but just in case, let's handle it
-                if (e.toString().contains('401')) {
-                  if (context.mounted) {
+            return [
+              IconButton(
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: isFavorite ? AppColors.error : null,
+                ),
+                onPressed: () async {
+                  // Check if user is authenticated first
+                  final authState = ref.read(authProvider);
+                  if (!authState.isAuthenticated) {
                     context.goNamed('login');
+                    return;
                   }
-                }
-              }
-            },
-          ),
-        ],
+
+                  try {
+                    await ref
+                        .read(
+                            favoriteNotifierProvider(int.parse(adId)).notifier)
+                        .toggleFavorite();
+                  } catch (e) {
+                    // If we get here with a 401, the interceptor should have redirected
+                    // but just in case, let's handle it
+                    if (e.toString().contains('401')) {
+                      if (context.mounted) {
+                        context.goNamed('login');
+                      }
+                    }
+                  }
+                },
+              ),
+            ];
+          },
+          orElse: () => [],
+        ),
       ),
       body: adDetailsAsync.when(
         data: (adDetails) {
@@ -208,6 +219,9 @@ class AdDetailsScreen extends ConsumerWidget {
       bottomNavigationBar: adDetailsAsync.maybeWhen(
         data: (adDetails) {
           if (adDetails == null) return null;
+
+          final isMyAd = authState.user?.id == adDetails.providerId;
+          if (isMyAd) return null; // Hide buttons for own ads
 
           return Container(
             padding: const EdgeInsets.all(AppConstants.spacing16),

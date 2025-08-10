@@ -9,6 +9,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/widgets/refresh_wrapper.dart';
 import '../../../home/presentation/widgets/ad_card.dart';
 import '../../providers/my_ads_provider.dart';
+import '../../../auth/providers/auth_provider.dart';
 
 class MyAdsScreen extends ConsumerWidget {
   const MyAdsScreen({super.key});
@@ -16,6 +17,16 @@ class MyAdsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final authState = ref.watch(authProvider);
+
+    // Redirect to login if not authenticated
+    if (!authState.isAuthenticated) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.goNamed('login');
+      });
+      return const Center(child: CircularProgressIndicator());
+    }
+
     final myAdsAsync = ref.watch(myAdsProvider);
 
     return Scaffold(
@@ -44,8 +55,9 @@ class MyAdsScreen extends ConsumerWidget {
 
           return RefreshWrapper(
             onRefresh: () async {
-              // Refresh the my ads list
-              await ref.refresh(myAdsProvider.future);
+              // Refresh the my ads list by invalidating the profile provider
+              // This will cascade and refresh myAdsProvider as it depends on userProfileProvider
+              ref.invalidate(userProfileProvider);
             },
             child: _buildAdsList(ads),
           );
@@ -77,7 +89,7 @@ class MyAdsScreen extends ConsumerWidget {
               ),
               SizedBox(height: AppConstants.spacing16),
               ElevatedButton(
-                onPressed: () => ref.refresh(myAdsProvider),
+                onPressed: () => ref.invalidate(userProfileProvider),
                 child: Text('Try Again'),
               ),
             ],
@@ -168,38 +180,22 @@ class MyAdsScreen extends ConsumerWidget {
           // Ad Card with custom overlay for my ads
           Stack(
             children: [
-              AdCard(ad: ad),
-            ],
-          ),
-          // Action buttons
-          Padding(
-            padding: EdgeInsets.all(AppConstants.spacing12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      // Delete ad functionality
-                      _showDeleteDialog(ad);
-                    },
-                    icon: Icon(Icons.delete, size: 16.r),
-                    label: Text('Delete'),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Colors.red),
-                      foregroundColor: Colors.red,
-                    ),
-                  ),
+              AdCard(
+                ad: AdSmall(
+                  id: ad.id,
+                  title: ad.title,
+                  price: ad.price,
+                  image: ad.image,
+                  comments: ad.comments,
+                  likes: ad.likes,
+                  location: ad.location,
+                  timeAgo: ad.timeAgo,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
     );
-  }
-
-  void _showDeleteDialog(AdSmall ad) {
-    // Implementation for delete confirmation dialog
-    // This would be implemented when delete functionality is added
   }
 }

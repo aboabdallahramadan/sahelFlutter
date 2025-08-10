@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/services/api_service.dart';
 import '../../models/ad_detail_response.dart';
+import '../../../auth/providers/auth_provider.dart';
+import '../../../profile/providers/followed_users_provider.dart';
 
-class UserProfileCard extends StatelessWidget {
+class UserProfileCard extends ConsumerWidget {
   final AdDetailResponse adDetails;
 
   const UserProfileCard({super.key, required this.adDetails});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+    final isMyAd = authState.user?.id == adDetails.providerId;
     return Container(
       padding: const EdgeInsets.all(AppConstants.spacing16),
       child: Row(
@@ -75,19 +81,30 @@ class UserProfileCard extends StatelessWidget {
             ),
           ),
 
-          // View Profile Button
-          TextButton(
-            onPressed: () {
-              // TODO: Navigate to user profile
-            },
-            child: Text(
-              'View Profile',
-              style: TextStyle(
-                color: AppColors.primaryAccent,
-                fontWeight: FontWeight.w600,
-              ),
+          // View Profile Button (hide for own ads)
+          if (!isMyAd)
+            Row(
+              children: [
+                // View Profile Button
+                TextButton(
+                  onPressed: () {
+                    context.pushNamed(
+                      'userProfile',
+                      pathParameters: {
+                        'userId': adDetails.providerId.toString()
+                      },
+                    );
+                  },
+                  child: Text(
+                    'View Profile',
+                    style: TextStyle(
+                      color: AppColors.primaryAccent,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
         ],
       ),
     );

@@ -7,6 +7,11 @@ import '../../../../core/providers/locale_provider.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/widgets/language_selection_dialog.dart';
 import '../../../auth/providers/auth_provider.dart';
+import '../../providers/my_ads_provider.dart';
+import '../../providers/followed_users_provider.dart';
+import '../../providers/favorites_provider.dart';
+import '../../../home/providers/offers_provider.dart';
+import '../../../categories/providers/categories_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -120,6 +125,15 @@ class ProfileScreen extends ConsumerWidget {
 
                         if (shouldLogout == true) {
                           await ref.read(authProvider.notifier).logout();
+
+                          // Clear all cached data by invalidating providers
+                          ref.invalidate(userProfileProvider);
+                          ref.invalidate(myAdsProvider);
+                          ref.invalidate(followedUsersProvider);
+                          ref.invalidate(favoritesProvider);
+                          ref.invalidate(offersProvider);
+                          ref.invalidate(categoriesProvider);
+
                           if (context.mounted) {
                             context.goNamed('home');
                           }
@@ -148,6 +162,15 @@ class ProfileScreen extends ConsumerWidget {
                     title: l10n.profileMyAds,
                     onTap: () {
                       context.goNamed('myAds');
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildMenuItem(
+                    context: context,
+                    icon: Icons.people,
+                    title: 'Following',
+                    onTap: () {
+                      context.goNamed('followedUsers');
                     },
                   ),
                   const Divider(height: 1),
