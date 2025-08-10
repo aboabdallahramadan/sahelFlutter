@@ -259,12 +259,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       children: [
                         _buildFeature(
                           icon: Icons.check_circle_outline,
-                          label: 'Secure Login',
+                          label: l10n.commonSecureLogin,
                           color: AppColors.success,
                         ),
                         _buildFeature(
                           icon: Icons.flash_on,
-                          label: 'Fast & Easy',
+                          label: l10n.commonFastEasy,
                           color: AppColors.secondary,
                         ),
                       ],
@@ -276,7 +276,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
               // Footer
               Text(
-                'By continuing, you agree to our Terms of Service and Privacy Policy',
+                l10n.commonByContinuingYouAgreeToOurTermsOfServiceAndPrivacyPolicy,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppColors.textTertiary,
                     ),

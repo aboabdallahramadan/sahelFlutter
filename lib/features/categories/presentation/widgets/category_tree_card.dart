@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/services/api_service.dart';
@@ -17,6 +18,7 @@ class CategoryTreeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: AppColors.backgroundWhite,
@@ -123,7 +125,7 @@ class CategoryTreeCard extends StatelessWidget {
                         if (category.subCategories.isNotEmpty) ...[
                           SizedBox(height: AppConstants.spacing4R),
                           Text(
-                            '${category.subCategories.length} subcategories',
+                            '${category.subCategories.length} ${l10n.subcategoriesTitle}',
                             style:
                                 Theme.of(context).textTheme.bodySmall?.copyWith(
                                       color: AppColors.textSecondary,

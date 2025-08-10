@@ -416,6 +416,271 @@ abstract class AppLocalizations {
   /// **'Retry'**
   String get commonRetry;
 
+  /// No description provided for @commonJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get commonJustNow;
+
+  /// No description provided for @commonMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes ago'**
+  String get commonMinutesAgo;
+
+  /// No description provided for @commonHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours ago'**
+  String get commonHoursAgo;
+
+  /// No description provided for @commonYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get commonYesterday;
+
+  /// No description provided for @commonDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'Days ago'**
+  String get commonDaysAgo;
+
+  /// No description provided for @commonSearchAds.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Ads'**
+  String get commonSearchAds;
+
+  /// No description provided for @commonStartTypingToSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Start typing to search'**
+  String get commonStartTypingToSearch;
+
+  /// No description provided for @commonErrorLoadingSearchResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading search results'**
+  String get commonErrorLoadingSearchResults;
+
+  /// No description provided for @commonNoResultsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get commonNoResultsFound;
+
+  /// No description provided for @commonTrySearchingForSomethingElse.
+  ///
+  /// In en, this message translates to:
+  /// **'Try searching for something else'**
+  String get commonTrySearchingForSomethingElse;
+
+  /// No description provided for @commonResultsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Results found'**
+  String get commonResultsFound;
+
+  /// No description provided for @commonSecureLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure Login'**
+  String get commonSecureLogin;
+
+  /// No description provided for @commonFastEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast And Easy'**
+  String get commonFastEasy;
+
+  /// No description provided for @commonByContinuingYouAgreeToOurTermsOfServiceAndPrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'By Continuing You Agree To Our Terms Of Service And Privacy Policy'**
+  String get commonByContinuingYouAgreeToOurTermsOfServiceAndPrivacyPolicy;
+
+  /// No description provided for @commonFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get commonFullName;
+
+  /// No description provided for @commonEnterYourFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your full name'**
+  String get commonEnterYourFullName;
+
+  /// No description provided for @commonEnterYourPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your phone number'**
+  String get commonEnterYourPhoneNumber;
+
+  /// No description provided for @commonByCreatingAnAccountYouAgreeToOurTermsOfServiceAndPrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'By Creating An Account You Agree To Our Terms Of Service And Privacy Policy'**
+  String
+      get commonByCreatingAnAccountYouAgreeToOurTermsOfServiceAndPrivacyPolicy;
+
+  /// No description provided for @commonPostNewAd.
+  ///
+  /// In en, this message translates to:
+  /// **'Post New Ad'**
+  String get commonPostNewAd;
+
+  /// No description provided for @commonPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get commonPhotos;
+
+  /// No description provided for @commonAddUpTo10Photos.
+  ///
+  /// In en, this message translates to:
+  /// **'Add up to 10 photos'**
+  String get commonAddUpTo10Photos;
+
+  /// No description provided for @commonAddPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Photo'**
+  String get commonAddPhoto;
+
+  /// No description provided for @commonCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get commonCategory;
+
+  /// No description provided for @commonEnterYourCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a category'**
+  String get commonEnterYourCategory;
+
+  /// No description provided for @commonRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Region'**
+  String get commonRegion;
+
+  /// No description provided for @commonEnterYourRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a region'**
+  String get commonEnterYourRegion;
+
+  /// No description provided for @commonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get commonTitle;
+
+  /// No description provided for @commonEnterYourTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter ad title'**
+  String get commonEnterYourTitle;
+
+  /// No description provided for @commonPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get commonPrice;
+
+  /// No description provided for @commonEnterYourPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter price'**
+  String get commonEnterYourPrice;
+
+  /// No description provided for @commonDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get commonDescription;
+
+  /// No description provided for @commonEnterYourDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter ad description'**
+  String get commonEnterYourDescription;
+
+  /// No description provided for @commonClearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get commonClearFilters;
+
+  /// No description provided for @commonFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get commonFilters;
+
+  /// No description provided for @commonSelectRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Region'**
+  String get commonSelectRegion;
+
+  /// No description provided for @commonAllRegions.
+  ///
+  /// In en, this message translates to:
+  /// **'All Regions'**
+  String get commonAllRegions;
+
+  /// No description provided for @commonPriceRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Price Range'**
+  String get commonPriceRange;
+
+  /// No description provided for @commonMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Min'**
+  String get commonMin;
+
+  /// No description provided for @commonMax.
+  ///
+  /// In en, this message translates to:
+  /// **'Max'**
+  String get commonMax;
+
+  /// No description provided for @commonApplyFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Filters'**
+  String get commonApplyFilters;
+
+  /// No description provided for @commonAdNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Ad not found'**
+  String get commonAdNotFound;
+
+  /// No description provided for @commonErrorLoadingAd.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading ad details'**
+  String get commonErrorLoadingAd;
+
+  /// No description provided for @commonCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get commonCall;
+
+  /// No description provided for @commonChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get commonChat;
+
   /// No description provided for @footerDescription.
   ///
   /// In en, this message translates to:
@@ -650,6 +915,12 @@ abstract class AppLocalizations {
   /// **'Type a message'**
   String get chatTypeMessage;
 
+  /// No description provided for @chatTapToStartConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to start conversation'**
+  String get chatTapToStartConversation;
+
   /// No description provided for @adPostTitle.
   ///
   /// In en, this message translates to:
@@ -878,11 +1149,35 @@ abstract class AppLocalizations {
   /// **'Terms & Conditions'**
   String get profileTerms;
 
+  /// No description provided for @profileMarkAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all read'**
+  String get profileMarkAllRead;
+
+  /// No description provided for @profileNoNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'NO Notifications'**
+  String get profileNoNotifications;
+
+  /// No description provided for @profileYoullSeeNotificationsHereWhenYouGetThem.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll see Notifications here when you get them'**
+  String get profileYoullSeeNotificationsHereWhenYouGetThem;
+
   /// No description provided for @profileHelp.
   ///
   /// In en, this message translates to:
   /// **'Help & Support'**
   String get profileHelp;
+
+  /// No description provided for @profileFollowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get profileFollowing;
 }
 
 class _AppLocalizationsDelegate

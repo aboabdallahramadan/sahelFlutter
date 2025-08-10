@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/config/app_config.dart';
@@ -17,7 +18,7 @@ class FollowedUsersScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
-
+    final l10n = AppLocalizations.of(context);
     // Redirect to login if not authenticated
     if (!authState.isAuthenticated) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -31,7 +32,7 @@ class FollowedUsersScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.primaryBg,
       appBar: AppBar(
-        title: const Text('Following'),
+        title: Text(l10n.profileFollowing),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),

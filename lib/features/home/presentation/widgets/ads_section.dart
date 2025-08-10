@@ -1,3 +1,4 @@
+import 'package:Sahel/core/providers/locale_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,7 +30,8 @@ class _AdsSectionState extends ConsumerState<AdsSection> {
       comments: offer.numberOfComments,
       likes: offer.numberOfFavorites,
       location: offer.regionName,
-      timeAgo: timeago.format(offer.createdAt),
+      timeAgo: timeago.format(offer.createdAt,
+          locale: ref.watch(localeProvider).languageCode),
     );
   }
 

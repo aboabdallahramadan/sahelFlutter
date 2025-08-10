@@ -168,7 +168,7 @@ class ProfileScreen extends ConsumerWidget {
                   _buildMenuItem(
                     context: context,
                     icon: Icons.people,
-                    title: 'Following',
+                    title: l10n.profileFollowing,
                     onTap: () {
                       context.goNamed('followedUsers');
                     },

@@ -165,7 +165,7 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: 'Search',
+                      hintText: l10n.commonSearchAds,
                       prefixIcon: const Icon(Icons.search),
                       filled: true,
                       fillColor: AppColors.backgroundGray,
@@ -192,7 +192,7 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                   TextButton(
                     onPressed: _clearFilters,
                     child: Text(
-                      'Clear',
+                      l10n.commonClearFilters,
                       style: TextStyle(
                         color: AppColors.error,
                         fontSize: 14.sp,
@@ -218,7 +218,7 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                   children: [
                     if (selectedRegionId != null)
                       _buildFilterChip(
-                        label: 'Region',
+                        label: l10n.commonRegion,
                         onRemove: () {
                           setState(() {
                             selectedRegionId = null;
@@ -230,7 +230,7 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                     if (minPrice != null || maxPrice != null)
                       _buildFilterChip(
                         label:
-                            'Price: ${minPrice ?? 0} - ${maxPrice ?? '∞'} QAR',
+                            '${l10n.commonPrice}: ${minPrice ?? 0} - ${maxPrice ?? '∞'} SAR',
                         onRemove: () {
                           setState(() {
                             minPrice = null;
@@ -242,7 +242,7 @@ class _SubcategoryScreenState extends ConsumerState<SubcategoryScreen> {
                       ),
                     if (searchTerm != null && searchTerm!.isNotEmpty)
                       _buildFilterChip(
-                        label: 'Search: "$searchTerm"',
+                        label: '${l10n.commonSearchAds}: "$searchTerm"',
                         onRemove: () {
                           setState(() {
                             searchTerm = null;

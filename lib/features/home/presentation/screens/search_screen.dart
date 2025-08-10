@@ -68,7 +68,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           controller: _searchController,
           autofocus: true,
           decoration: InputDecoration(
-            hintText: 'Search ads...',
+            hintText: l10n.commonSearchAds,
             border: InputBorder.none,
             hintStyle: TextStyle(
               color: AppColors.textSecondary,
@@ -106,7 +106,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   ),
                   SizedBox(height: AppConstants.spacing16R),
                   Text(
-                    'Start typing to search',
+                    l10n.commonStartTypingToSearch,
                     style: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 16.sp,
@@ -129,7 +129,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   ),
                   SizedBox(height: AppConstants.spacing16R),
                   Text(
-                    'Error loading search results',
+                    l10n.commonErrorLoadingSearchResults,
                     style: TextStyle(
                       color: AppColors.textPrimary,
                       fontSize: 16.sp,
@@ -148,7 +148,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     onPressed: () {
                       ref.read(searchOffersProvider.notifier).refresh();
                     },
-                    child: const Text('Retry'),
+                    child: Text(l10n.commonRetry),
                   ),
                 ],
               ),
@@ -175,7 +175,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   ),
                   SizedBox(height: AppConstants.spacing16R),
                   Text(
-                    'No results found',
+                    l10n.commonNoResultsFound,
                     style: TextStyle(
                       color: AppColors.textPrimary,
                       fontSize: 18.sp,
@@ -184,7 +184,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   ),
                   SizedBox(height: AppConstants.spacing8R),
                   Text(
-                    'Try searching for something else',
+                    l10n.commonTrySearchingForSomethingElse,
                     style: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 14.sp,
@@ -202,7 +202,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 child: Container(
                   padding: EdgeInsets.all(AppConstants.spacing16R),
                   child: Text(
-                    '${searchState.offers.length} results found',
+                    '${searchState.offers.length} ${l10n.commonResultsFound}',
                     style: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 14.sp,

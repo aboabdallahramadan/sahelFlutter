@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../features/categories/providers/categories_api_provider.dart';
@@ -168,14 +169,14 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
       );
     }
 
-    // final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context);
     final categoriesAsync = ref.watch(categoriesApiProvider);
     final regionsAsync = ref.watch(regionsProvider);
 
     return Scaffold(
       backgroundColor: AppColors.primaryBg,
       appBar: AppBar(
-        title: const Text('Post New Ad'),
+        title: Text(l10n.commonPostNewAd),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => context.pop(),
@@ -195,14 +196,14 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Photos',
+                      l10n.commonPhotos,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                     ),
                     const SizedBox(height: AppConstants.spacing8),
                     Text(
-                      'Add up to 10 photos',
+                      l10n.commonAddUpTo10Photos,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: AppColors.textSecondary,
                           ),
@@ -245,7 +246,7 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                                   ),
                                   const SizedBox(height: AppConstants.spacing4),
                                   Text(
-                                    'Add Photo',
+                                    l10n.commonAddPhoto,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodySmall
@@ -343,7 +344,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                       data: (categories) => DropdownButtonFormField<int>(
                         value: _selectedCategoryId,
                         decoration: InputDecoration(
-                          labelText: 'Category *',
+                          labelText: l10n.commonCategory,
+                          hintText: l10n.commonEnterYourCategory,
                           filled: true,
                           fillColor: AppColors.backgroundGray,
                           border: OutlineInputBorder(
@@ -376,7 +378,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                       data: (regions) => DropdownButtonFormField<int>(
                         value: _selectedRegionId,
                         decoration: InputDecoration(
-                          labelText: 'Region *',
+                          labelText: l10n.commonRegion,
+                          hintText: l10n.commonEnterYourRegion,
                           filled: true,
                           fillColor: AppColors.backgroundGray,
                           border: OutlineInputBorder(
@@ -413,7 +416,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                     TextFormField(
                       controller: _titleController,
                       decoration: InputDecoration(
-                        labelText: 'Title *',
+                        labelText: l10n.commonTitle,
+                        hintText: l10n.commonEnterYourTitle,
                         filled: true,
                         fillColor: AppColors.backgroundGray,
                         border: OutlineInputBorder(
@@ -439,7 +443,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                       controller: _priceController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: 'Price (SAR) *',
+                        labelText: l10n.commonPrice,
+                        hintText: l10n.commonEnterYourPrice,
                         filled: true,
                         fillColor: AppColors.backgroundGray,
                         border: OutlineInputBorder(
@@ -465,7 +470,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                       controller: _descriptionController,
                       maxLines: 5,
                       decoration: InputDecoration(
-                        labelText: 'Description *',
+                        labelText: l10n.commonDescription,
+                        hintText: l10n.commonEnterYourDescription,
                         alignLabelWithHint: true,
                         filled: true,
                         fillColor: AppColors.backgroundGray,

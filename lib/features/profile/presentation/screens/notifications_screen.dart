@@ -33,7 +33,7 @@ class NotificationsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    
+
     // Mock data - in real app this would come from a provider
     final notifications = _getMockNotifications();
 
@@ -51,7 +51,7 @@ class NotificationsScreen extends ConsumerWidget {
               onPressed: () {
                 // TODO: Mark all as read
               },
-              child: const Text('Mark all read'),
+              child: Text(l10n.profileMarkAllRead),
             ),
         ],
       ),
@@ -67,17 +67,17 @@ class NotificationsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: AppConstants.spacing16),
                   Text(
-                    'No notifications',
+                    l10n.profileNoNotifications,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                          color: AppColors.textSecondary,
+                        ),
                   ),
                   const SizedBox(height: AppConstants.spacing8),
                   Text(
-                    'You\'ll see notifications here when you get them',
+                    l10n.profileYoullSeeNotificationsHereWhenYouGetThem,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textTertiary,
-                    ),
+                          color: AppColors.textTertiary,
+                        ),
                   ),
                 ],
               ),
@@ -93,14 +93,15 @@ class NotificationsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildNotificationItem(BuildContext context, NotificationItem notification) {
+  Widget _buildNotificationItem(
+      BuildContext context, NotificationItem notification) {
     return InkWell(
       onTap: () {
         // TODO: Handle notification tap based on type and actionId
       },
       child: Container(
-        color: notification.isRead 
-            ? AppColors.backgroundWhite 
+        color: notification.isRead
+            ? AppColors.backgroundWhite
             : AppColors.primaryAccent.withOpacity(0.05),
         padding: const EdgeInsets.all(AppConstants.spacing16),
         child: Row(
@@ -111,8 +112,10 @@ class NotificationsScreen extends ConsumerWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: _getNotificationColor(notification.type).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppConstants.radiusCircular),
+                color:
+                    _getNotificationColor(notification.type).withOpacity(0.1),
+                borderRadius:
+                    BorderRadius.circular(AppConstants.radiusCircular),
               ),
               child: Icon(
                 _getNotificationIcon(notification.type),
@@ -121,7 +124,7 @@ class NotificationsScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: AppConstants.spacing12),
-            
+
             // Content
             Expanded(
               child: Column(
@@ -130,31 +133,31 @@ class NotificationsScreen extends ConsumerWidget {
                   Text(
                     notification.title,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: notification.isRead 
-                          ? FontWeight.w500 
-                          : FontWeight.w700,
-                    ),
+                          fontWeight: notification.isRead
+                              ? FontWeight.w500
+                              : FontWeight.w700,
+                        ),
                   ),
                   const SizedBox(height: AppConstants.spacing4),
                   Text(
                     notification.body,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                          color: AppColors.textSecondary,
+                        ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: AppConstants.spacing8),
                   Text(
-                    _formatTime(notification.timestamp),
+                    _formatTime(context, notification.timestamp),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.textTertiary,
-                    ),
+                          color: AppColors.textTertiary,
+                        ),
                   ),
                 ],
               ),
             ),
-            
+
             // Unread indicator
             if (!notification.isRead)
               Container(
@@ -197,15 +200,16 @@ class NotificationsScreen extends ConsumerWidget {
     }
   }
 
-  String _formatTime(DateTime date) {
+  String _formatTime(BuildContext context, DateTime date) {
     final now = DateTime.now();
     final diff = now.difference(date);
-    
-    if (diff.inMinutes < 1) return 'Just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes} minutes ago';
-    if (diff.inHours < 24) return '${diff.inHours} hours ago';
-    if (diff.inDays == 1) return 'Yesterday';
-    return '${diff.inDays} days ago';
+    final l10n = AppLocalizations.of(context);
+    if (diff.inMinutes < 1) return l10n.commonJustNow;
+    if (diff.inMinutes < 60)
+      return '${diff.inMinutes} ${l10n.commonMinutesAgo}';
+    if (diff.inHours < 24) return '${diff.inHours} ${l10n.commonHoursAgo}';
+    if (diff.inDays == 1) return l10n.commonYesterday;
+    return '${diff.inDays} ${l10n.commonDaysAgo}';
   }
 
   List<NotificationItem> _getMockNotifications() {
@@ -247,4 +251,4 @@ class NotificationsScreen extends ConsumerWidget {
       ),
     ];
   }
-} 
+}

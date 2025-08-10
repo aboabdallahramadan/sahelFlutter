@@ -170,6 +170,141 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonRetry => 'Retry';
 
   @override
+  String get commonJustNow => 'Just now';
+
+  @override
+  String get commonMinutesAgo => 'Minutes ago';
+
+  @override
+  String get commonHoursAgo => 'Hours ago';
+
+  @override
+  String get commonYesterday => 'Yesterday';
+
+  @override
+  String get commonDaysAgo => 'Days ago';
+
+  @override
+  String get commonSearchAds => 'Search Ads';
+
+  @override
+  String get commonStartTypingToSearch => 'Start typing to search';
+
+  @override
+  String get commonErrorLoadingSearchResults => 'Error loading search results';
+
+  @override
+  String get commonNoResultsFound => 'No results found';
+
+  @override
+  String get commonTrySearchingForSomethingElse =>
+      'Try searching for something else';
+
+  @override
+  String get commonResultsFound => 'Results found';
+
+  @override
+  String get commonSecureLogin => 'Secure Login';
+
+  @override
+  String get commonFastEasy => 'Fast And Easy';
+
+  @override
+  String get commonByContinuingYouAgreeToOurTermsOfServiceAndPrivacyPolicy =>
+      'By Continuing You Agree To Our Terms Of Service And Privacy Policy';
+
+  @override
+  String get commonFullName => 'Full Name';
+
+  @override
+  String get commonEnterYourFullName => 'Enter your full name';
+
+  @override
+  String get commonEnterYourPhoneNumber => 'Enter your phone number';
+
+  @override
+  String get commonByCreatingAnAccountYouAgreeToOurTermsOfServiceAndPrivacyPolicy =>
+      'By Creating An Account You Agree To Our Terms Of Service And Privacy Policy';
+
+  @override
+  String get commonPostNewAd => 'Post New Ad';
+
+  @override
+  String get commonPhotos => 'Photos';
+
+  @override
+  String get commonAddUpTo10Photos => 'Add up to 10 photos';
+
+  @override
+  String get commonAddPhoto => 'Add Photo';
+
+  @override
+  String get commonCategory => 'Category';
+
+  @override
+  String get commonEnterYourCategory => 'Select a category';
+
+  @override
+  String get commonRegion => 'Region';
+
+  @override
+  String get commonEnterYourRegion => 'Select a region';
+
+  @override
+  String get commonTitle => 'Title';
+
+  @override
+  String get commonEnterYourTitle => 'Enter ad title';
+
+  @override
+  String get commonPrice => 'Price';
+
+  @override
+  String get commonEnterYourPrice => 'Enter price';
+
+  @override
+  String get commonDescription => 'Description';
+
+  @override
+  String get commonEnterYourDescription => 'Enter ad description';
+
+  @override
+  String get commonClearFilters => 'Clear filters';
+
+  @override
+  String get commonFilters => 'Filters';
+
+  @override
+  String get commonSelectRegion => 'Select Region';
+
+  @override
+  String get commonAllRegions => 'All Regions';
+
+  @override
+  String get commonPriceRange => 'Price Range';
+
+  @override
+  String get commonMin => 'Min';
+
+  @override
+  String get commonMax => 'Max';
+
+  @override
+  String get commonApplyFilters => 'Apply Filters';
+
+  @override
+  String get commonAdNotFound => 'Ad not found';
+
+  @override
+  String get commonErrorLoadingAd => 'Error loading ad details';
+
+  @override
+  String get commonCall => 'Call';
+
+  @override
+  String get commonChat => 'Chat';
+
+  @override
   String get footerDescription =>
       'Top Classified Site in Gulf. Post free ads. Buy and sell used cars, apartment for rent, search jobs and more cheap quality items in Gulf';
 
@@ -296,6 +431,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatTypeMessage => 'Type a message';
 
   @override
+  String get chatTapToStartConversation => 'Tap to start conversation';
+
+  @override
   String get adPostTitle => 'Post Your Ad';
 
   @override
@@ -410,5 +548,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileTerms => 'Terms & Conditions';
 
   @override
+  String get profileMarkAllRead => 'Mark all read';
+
+  @override
+  String get profileNoNotifications => 'NO Notifications';
+
+  @override
+  String get profileYoullSeeNotificationsHereWhenYouGetThem =>
+      'You\'ll see Notifications here when you get them';
+
+  @override
   String get profileHelp => 'Help & Support';
+
+  @override
+  String get profileFollowing => 'Following';
 }

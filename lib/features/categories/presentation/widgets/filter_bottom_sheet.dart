@@ -95,7 +95,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
-            
+
             // Header
             Padding(
               padding: EdgeInsets.all(AppConstants.spacing16R),
@@ -103,7 +103,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Filters',
+                    l10n.commonFilters,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -111,7 +111,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                   TextButton(
                     onPressed: _resetFilters,
                     child: Text(
-                      'Reset',
+                      l10n.commonClearFilters,
                       style: TextStyle(
                         color: AppColors.error,
                         fontSize: 14.sp,
@@ -121,9 +121,9 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                 ],
               ),
             ),
-            
+
             const Divider(height: 1),
-            
+
             // Filters Content
             Flexible(
               child: SingleChildScrollView(
@@ -133,7 +133,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                   children: [
                     // Region Filter
                     Text(
-                      'Region',
+                      l10n.commonRegion,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -143,11 +143,12 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                       data: (regions) => DropdownButtonFormField<int>(
                         value: _selectedRegionId,
                         decoration: InputDecoration(
-                          hintText: 'Select region',
+                          hintText: l10n.commonSelectRegion,
                           filled: true,
                           fillColor: AppColors.backgroundGray,
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
+                            borderRadius:
+                                BorderRadius.circular(AppConstants.radiusLarge),
                             borderSide: BorderSide.none,
                           ),
                           contentPadding: EdgeInsets.symmetric(
@@ -156,9 +157,9 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                           ),
                         ),
                         items: [
-                          const DropdownMenuItem<int>(
+                          DropdownMenuItem<int>(
                             value: null,
-                            child: Text('All Regions'),
+                            child: Text(l10n.commonAllRegions),
                           ),
                           ...regions.map((region) => DropdownMenuItem<int>(
                                 value: region.id,
@@ -174,12 +175,12 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                       loading: () => const LinearProgressIndicator(),
                       error: (_, __) => const Text('Failed to load regions'),
                     ),
-                    
+
                     SizedBox(height: AppConstants.spacing24R),
-                    
+
                     // Price Range Filter
                     Text(
-                      'Price Range (QAR)',
+                      l10n.commonPriceRange,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -192,11 +193,12 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                             controller: _minPriceController,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
-                              hintText: 'Min',
+                              hintText: l10n.commonMin,
                               filled: true,
                               fillColor: AppColors.backgroundGray,
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
+                                borderRadius: BorderRadius.circular(
+                                    AppConstants.radiusLarge),
                                 borderSide: BorderSide.none,
                               ),
                               contentPadding: EdgeInsets.symmetric(
@@ -208,7 +210,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                         ),
                         SizedBox(width: AppConstants.spacing16R),
                         Text(
-                          'to',
+                          '-',
                           style: TextStyle(
                             color: AppColors.textSecondary,
                             fontSize: 14.sp,
@@ -220,11 +222,12 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                             controller: _maxPriceController,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
-                              hintText: 'Max',
+                              hintText: l10n.commonMax,
                               filled: true,
                               fillColor: AppColors.backgroundGray,
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
+                                borderRadius: BorderRadius.circular(
+                                    AppConstants.radiusLarge),
                                 borderSide: BorderSide.none,
                               ),
                               contentPadding: EdgeInsets.symmetric(
@@ -236,13 +239,13 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                         ),
                       ],
                     ),
-                    
+
                     SizedBox(height: AppConstants.spacing32R),
                   ],
                 ),
               ),
             ),
-            
+
             // Apply Button
             Container(
               padding: EdgeInsets.all(AppConstants.spacing16R),
@@ -262,11 +265,12 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                   backgroundColor: AppColors.primaryAccent,
                   minimumSize: const Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
+                    borderRadius:
+                        BorderRadius.circular(AppConstants.radiusLarge),
                   ),
                 ),
                 child: Text(
-                  'Apply Filters',
+                  l10n.commonApplyFilters,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
@@ -284,17 +288,17 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
     if (region.parentId == null) {
       return region.name;
     }
-    
+
     // Build hierarchical name
     final parent = allRegions.firstWhere(
       (r) => r.id == region.parentId,
       orElse: () => region,
     );
-    
+
     if (parent.id == region.id) {
       return region.name;
     }
-    
+
     return '${parent.name} > ${region.name}';
   }
 }

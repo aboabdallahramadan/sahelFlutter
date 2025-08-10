@@ -135,7 +135,7 @@ class AdDetailsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: AppConstants.spacing16),
                   Text(
-                    'Ad not found',
+                    l10n.commonAdNotFound,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ],
@@ -193,7 +193,7 @@ class AdDetailsScreen extends ConsumerWidget {
               ),
               const SizedBox(height: AppConstants.spacing16),
               Text(
-                'Error loading ad',
+                l10n.commonErrorLoadingAd,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: AppConstants.spacing8),
@@ -242,7 +242,7 @@ class AdDetailsScreen extends ConsumerWidget {
                     onPressed: () =>
                         _makePhoneCall(adDetails.providerPhoneNumber),
                     icon: const Icon(Icons.phone),
-                    label: const Text('Call'),
+                    label: Text(l10n.commonCall),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.primaryAccent,
                       side: const BorderSide(color: AppColors.primaryAccent),
@@ -258,7 +258,7 @@ class AdDetailsScreen extends ConsumerWidget {
                     onPressed: () =>
                         _navigateToChat(context, ref, adDetails.providerId),
                     icon: const Icon(Icons.chat_bubble_outline),
-                    label: const Text('Chat'),
+                    label: Text(l10n.commonChat),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryAccent,
                       padding: const EdgeInsets.symmetric(

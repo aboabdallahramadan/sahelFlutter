@@ -174,7 +174,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   children: [
                     // Name Input
                     Text(
-                      'Full Name',
+                      l10n.commonFullName,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -185,7 +185,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       keyboardType: TextInputType.name,
                       textCapitalization: TextCapitalization.words,
                       decoration: InputDecoration(
-                        hintText: 'Enter your full name',
+                        hintText: l10n.commonEnterYourFullName,
                         filled: true,
                         fillColor: AppColors.backgroundGray,
                         border: OutlineInputBorder(
@@ -236,7 +236,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             controller: _phoneController,
                             keyboardType: TextInputType.phone,
                             decoration: InputDecoration(
-                              hintText: '12345678',
+                              hintText: l10n.commonEnterYourPhoneNumber,
                               filled: true,
                               fillColor: AppColors.backgroundGray,
                               border: OutlineInputBorder(
@@ -312,7 +312,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
               // Footer
               Text(
-                'By creating an account, you agree to our Terms of Service and Privacy Policy',
+                l10n.commonByCreatingAnAccountYouAgreeToOurTermsOfServiceAndPrivacyPolicy,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppColors.textTertiary,
                     ),

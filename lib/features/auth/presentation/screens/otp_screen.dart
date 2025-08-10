@@ -190,17 +190,20 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
               const SizedBox(height: AppConstants.spacing48),
 
               // OTP Input
-              Center(
-                child: Pinput(
-                  controller: _pinController,
-                  length: 6,
-                  defaultPinTheme: defaultPinTheme,
-                  focusedPinTheme: focusedPinTheme,
-                  submittedPinTheme: submittedPinTheme,
-                  showCursor: true,
-                  autofocus: true,
-                  enabled: !authState.isLoading,
-                  onCompleted: _handleVerifyOTP,
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: Center(
+                  child: Pinput(
+                    controller: _pinController,
+                    length: 6,
+                    defaultPinTheme: defaultPinTheme,
+                    focusedPinTheme: focusedPinTheme,
+                    submittedPinTheme: submittedPinTheme,
+                    showCursor: true,
+                    autofocus: true,
+                    enabled: !authState.isLoading,
+                    onCompleted: _handleVerifyOTP,
+                  ),
                 ),
               ),
               const SizedBox(height: AppConstants.spacing32),

@@ -249,6 +249,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
   }
 
   Widget _buildChatItem(ChatListItem chat) {
+    final l10n = AppLocalizations.of(context);
     return InkWell(
       onTap: () {
         context.goNamed('chat', pathParameters: {'chatId': chat.id.toString()});
@@ -296,7 +297,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
                   ),
                   const SizedBox(height: AppConstants.spacing4),
                   Text(
-                    'Tap to start conversation',
+                    l10n.chatTapToStartConversation,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
                         ),

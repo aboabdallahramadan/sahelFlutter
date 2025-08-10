@@ -169,6 +169,141 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonRetry => 'اعادة المحاولة';
 
   @override
+  String get commonJustNow => 'الآن';
+
+  @override
+  String get commonMinutesAgo => 'دقائق';
+
+  @override
+  String get commonHoursAgo => 'ساعات';
+
+  @override
+  String get commonYesterday => 'الأمس';
+
+  @override
+  String get commonDaysAgo => 'ايام';
+
+  @override
+  String get commonSearchAds => 'ابحث عن اعلانات';
+
+  @override
+  String get commonStartTypingToSearch => 'اكتب لبدء البحث';
+
+  @override
+  String get commonErrorLoadingSearchResults => 'حدث خطأ ما';
+
+  @override
+  String get commonNoResultsFound => 'لم يتم العثور على شيئ';
+
+  @override
+  String get commonTrySearchingForSomethingElse => 'حاول البحث عن شيئ آخر';
+
+  @override
+  String get commonResultsFound => 'نتائج عثر عليها';
+
+  @override
+  String get commonSecureLogin => 'تسجيل دخول آمن';
+
+  @override
+  String get commonFastEasy => 'سريع وسهل';
+
+  @override
+  String get commonByContinuingYouAgreeToOurTermsOfServiceAndPrivacyPolicy =>
+      'بالمتابعة فإنك توافق على شروط الخدمة وسياسة الخصوصية';
+
+  @override
+  String get commonFullName => 'الاسم الكامل';
+
+  @override
+  String get commonEnterYourFullName => 'أدخل اسمك الكامل';
+
+  @override
+  String get commonEnterYourPhoneNumber => 'أدخل رقم هاتفك';
+
+  @override
+  String
+      get commonByCreatingAnAccountYouAgreeToOurTermsOfServiceAndPrivacyPolicy =>
+          'بإنشاء حساب فإنك توافق على شروط الخدمة وسياسة الخصوصية';
+
+  @override
+  String get commonPostNewAd => 'إضافة إعلان جديد';
+
+  @override
+  String get commonPhotos => 'الصور';
+
+  @override
+  String get commonAddUpTo10Photos => 'أضف حتى 10 صور';
+
+  @override
+  String get commonAddPhoto => 'إضافة صورة';
+
+  @override
+  String get commonCategory => 'القسم';
+
+  @override
+  String get commonEnterYourCategory => 'اختر القسم';
+
+  @override
+  String get commonRegion => 'المنطقة';
+
+  @override
+  String get commonEnterYourRegion => 'اختر المنطقة';
+
+  @override
+  String get commonTitle => 'العنوان';
+
+  @override
+  String get commonEnterYourTitle => 'أدخل عنوان الإعلان';
+
+  @override
+  String get commonPrice => 'السعر';
+
+  @override
+  String get commonEnterYourPrice => 'أدخل السعر';
+
+  @override
+  String get commonDescription => 'الوصف';
+
+  @override
+  String get commonEnterYourDescription => 'أدخل وصف الإعلان';
+
+  @override
+  String get commonClearFilters => 'مسح التصفيات';
+
+  @override
+  String get commonFilters => 'التصفيات';
+
+  @override
+  String get commonSelectRegion => 'اختر المنطقة';
+
+  @override
+  String get commonAllRegions => 'كل المناطق';
+
+  @override
+  String get commonPriceRange => 'نطاق السعر';
+
+  @override
+  String get commonMin => 'الحد الأدنى';
+
+  @override
+  String get commonMax => 'الحد الأقصى';
+
+  @override
+  String get commonApplyFilters => 'تطبيق التصفيات';
+
+  @override
+  String get commonAdNotFound => 'لم يتم العثور على الإعلان';
+
+  @override
+  String get commonErrorLoadingAd => 'خطأ في تحميل تفاصيل الإعلان';
+
+  @override
+  String get commonCall => 'اتصال';
+
+  @override
+  String get commonChat => 'محادثة';
+
+  @override
   String get footerDescription =>
       'موقع إعلانات سهل البيع والشراء الأعلى في الجودة. إضافة إعلانات مجانية. شراء وبيع سيارات مستعملة، شقق للإيجار، البحث عن وظائف والمزيد من العناصر المنزلية والجودة في سهل';
 
@@ -296,6 +431,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chatTypeMessage => 'اكتب رسالة';
 
   @override
+  String get chatTapToStartConversation => 'اضغط لبدء المحادثة';
+
+  @override
   String get adPostTitle => 'أضف إعلانك';
 
   @override
@@ -410,5 +548,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileTerms => 'الشروط والأحكام';
 
   @override
+  String get profileMarkAllRead => 'تمميز الكل كمقروء';
+
+  @override
+  String get profileNoNotifications => 'لا يوجد اشعارات';
+
+  @override
+  String get profileYoullSeeNotificationsHereWhenYouGetThem =>
+      'سوف ترى الاشعارات هنا عندما تصلك';
+
+  @override
   String get profileHelp => 'المساعدة والدعم';
+
+  @override
+  String get profileFollowing => 'اشخاص اتابعهم';
 }

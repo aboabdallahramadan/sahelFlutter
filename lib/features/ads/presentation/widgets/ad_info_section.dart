@@ -124,7 +124,7 @@ class AdInfoSection extends StatelessWidget {
 
           // Description
           Text(
-            'Description',
+            l10n.commonDescription,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
