@@ -305,8 +305,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                                     borderRadius: BorderRadius.circular(
                                         AppConstants.radiusSmall),
                                   ),
-                                  child: const Text(
-                                    'Main',
+                                  child: Text(
+                                    l10n.commonMain,
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 12,
@@ -332,7 +332,7 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Ad Details',
+                      l10n.commonAdDetails,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -523,8 +523,8 @@ class _PostAdScreenState extends ConsumerState<PostAdScreen> {
                             ),
                           ),
                         )
-                      : const Text(
-                          'Post Ad',
+                      : Text(
+                          l10n.commonPostAd,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,

@@ -305,6 +305,81 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonChat => 'Chat';
 
   @override
+  String get commonMemberSince => 'Member since';
+
+  @override
+  String get commonViewProfile => 'View Profile';
+
+  @override
+  String get commonReply => 'Reply';
+
+  @override
+  String get commonReplies => 'Replies';
+
+  @override
+  String get commonAddReply => 'Add Reply';
+
+  @override
+  String get commonFailedToLoadReplies => 'Failed to load replies';
+
+  @override
+  String get commonLoadMoreReplies => 'Load more replies';
+
+  @override
+  String get commonItems => 'items';
+
+  @override
+  String get commonYear => 'year';
+
+  @override
+  String get commonYears => 'years';
+
+  @override
+  String get commonAgo => 'ago';
+
+  @override
+  String get commonMonth => 'month';
+
+  @override
+  String get commonMonths => 'months';
+
+  @override
+  String get commonWeek => 'week';
+
+  @override
+  String get commonWeeks => 'weeks';
+
+  @override
+  String get commonDay => 'day';
+
+  @override
+  String get commonDays => 'days';
+
+  @override
+  String get commonHour => 'hour';
+
+  @override
+  String get commonHours => 'hours';
+
+  @override
+  String get commonMinute => 'minute';
+
+  @override
+  String get commonMinutes => 'minutes';
+
+  @override
+  String get commonRecently => 'Recently';
+
+  @override
+  String get commonMain => 'Main';
+
+  @override
+  String get commonAdDetails => 'Ad Details';
+
+  @override
+  String get commonPostAd => 'Post Ad';
+
+  @override
   String get footerDescription =>
       'Top Classified Site in Gulf. Post free ads. Buy and sell used cars, apartment for rent, search jobs and more cheap quality items in Gulf';
 
@@ -562,4 +637,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileFollowing => 'Following';
+
+  @override
+  String get profileUserProfile => 'User Profile';
+
+  @override
+  String get profileUserNotFound => 'User not found';
+
+  @override
+  String get profileErrorLoadingProfile => 'Error loading profile';
+
+  @override
+  String get profileUnfollowUser => 'Unfollow User';
+
+  @override
+  String get profileAreYouSureYouWantToUnfollow =>
+      'Are you sure you want to unfollow this user?';
+
+  @override
+  String get profileUnfollow => 'Unfollow';
+
+  @override
+  String get profileFollowers => 'Followers';
+
+  @override
+  String get profileUserAds => 'User Ads';
+
+  @override
+  String get profileNoAdsPostedYet => 'No ads posted yet';
+
+  @override
+  String get profileFollow => 'Follow';
 }

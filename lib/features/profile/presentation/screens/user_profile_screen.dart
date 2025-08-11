@@ -13,6 +13,7 @@ import '../../models/profile_offer.dart';
 import '../../providers/user_profile_provider.dart';
 import '../../providers/followed_users_provider.dart';
 import '../../../auth/providers/auth_provider.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class UserProfileScreen extends ConsumerWidget {
   final String userId;
@@ -26,11 +27,11 @@ class UserProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userProfileAsync =
         ref.watch(individualUserProfileProvider(int.parse(userId)));
-
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.primaryBg,
       appBar: AppBar(
-        title: const Text('User Profile'),
+        title: Text(l10n.profileUserProfile),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -39,8 +40,8 @@ class UserProfileScreen extends ConsumerWidget {
       body: userProfileAsync.when(
         data: (profile) {
           if (profile == null) {
-            return const Center(
-              child: Text('User not found'),
+            return Center(
+              child: Text(l10n.profileUserNotFound),
             );
           }
 
@@ -77,7 +78,7 @@ class UserProfileScreen extends ConsumerWidget {
               ),
               SizedBox(height: AppConstants.spacing16),
               Text(
-                'Error loading profile',
+                l10n.profileErrorLoadingProfile,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               SizedBox(height: AppConstants.spacing8),
@@ -92,7 +93,7 @@ class UserProfileScreen extends ConsumerWidget {
               ElevatedButton(
                 onPressed: () => ref
                     .refresh(individualUserProfileProvider(int.parse(userId))),
-                child: const Text('Try Again'),
+                child: Text(l10n.commonRetry),
               ),
             ],
           ),
@@ -108,7 +109,7 @@ class UserProfileScreen extends ConsumerWidget {
         final isMyProfile = authState.user?.id == profile.id;
         final followState = ref.watch(followStateProvider(profile.id));
         final isFollowing = ref.watch(isFollowingProvider(profile.id));
-
+        final l10n = AppLocalizations.of(context);
         return Container(
           color: AppColors.backgroundWhite,
           padding: EdgeInsets.all(AppConstants.spacing24),
@@ -158,7 +159,7 @@ class UserProfileScreen extends ConsumerWidget {
                     ),
                     SizedBox(width: AppConstants.spacing4),
                     Text(
-                      'Member since ${_formatMemberSince(profile.memberSince!)}',
+                      '${l10n.commonMemberSince} ${_formatMemberSince(profile.memberSince!, context)}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: AppColors.textTertiary,
                           ),
@@ -178,11 +179,11 @@ class UserProfileScreen extends ConsumerWidget {
                               context: context,
                               builder: (context) => AlertDialog(
                                 title: Text(
-                                  'Unfollow User',
+                                  l10n.profileUnfollowUser,
                                   style: Theme.of(context).textTheme.titleLarge,
                                 ),
                                 content: Text(
-                                  'Are you sure you want to unfollow ${profile.name}?',
+                                  '${l10n.profileAreYouSureYouWantToUnfollow} ${profile.name}?',
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 actions: [
@@ -190,7 +191,7 @@ class UserProfileScreen extends ConsumerWidget {
                                     onPressed: () =>
                                         Navigator.of(context).pop(false),
                                     child: Text(
-                                      'Cancel',
+                                      l10n.commonCancel,
                                       style: TextStyle(
                                           color: AppColors.textSecondary),
                                     ),
@@ -202,7 +203,7 @@ class UserProfileScreen extends ConsumerWidget {
                                       backgroundColor: AppColors.error,
                                       foregroundColor: Colors.white,
                                     ),
-                                    child: const Text('Unfollow'),
+                                    child: Text(l10n.profileUnfollow),
                                   ),
                                 ],
                               ),
@@ -213,7 +214,7 @@ class UserProfileScreen extends ConsumerWidget {
                             }
                           },
                           icon: Icon(Icons.person_remove),
-                          label: Text('Unfollow'),
+                          label: Text(l10n.profileUnfollow),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: AppColors.error,
                             side: BorderSide(color: AppColors.error),
@@ -228,7 +229,7 @@ class UserProfileScreen extends ConsumerWidget {
                             await toggleFollowUser(ref, profile.id);
                           },
                           icon: Icon(Icons.person_add),
-                          label: Text('Follow'),
+                          label: Text(l10n.profileFollow),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryAccent,
                             padding: EdgeInsets.symmetric(
@@ -248,7 +249,7 @@ class UserProfileScreen extends ConsumerWidget {
                       await toggleFollowUser(ref, profile.id);
                     },
                     icon: Icon(Icons.error_outline),
-                    label: Text('Retry'),
+                    label: Text(l10n.commonRetry),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.error,
                       padding: EdgeInsets.symmetric(
@@ -267,6 +268,7 @@ class UserProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildStatsSection(BuildContext context, UserProfile profile) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       color: AppColors.backgroundWhite,
       padding: EdgeInsets.symmetric(vertical: AppConstants.spacing16),
@@ -275,20 +277,20 @@ class UserProfileScreen extends ConsumerWidget {
         children: [
           _buildStatItem(
             context: context,
-            label: 'Ads',
+            label: l10n.commonAds,
             value: profile.offersCount?.toString() ??
                 profile.offers.length.toString(),
             icon: Icons.post_add,
           ),
           _buildStatItem(
             context: context,
-            label: 'Followers',
+            label: l10n.profileFollowers,
             value: profile.followersCount?.toString() ?? '0',
             icon: Icons.people,
           ),
           _buildStatItem(
             context: context,
-            label: 'Following',
+            label: l10n.profileFollowing,
             value: profile.followingCount?.toString() ?? '0',
             icon: Icons.person_add,
           ),
@@ -329,6 +331,7 @@ class UserProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildAdsSection(BuildContext context, List<ProfileOffer> offers) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       color: AppColors.backgroundWhite,
       child: Column(
@@ -345,14 +348,14 @@ class UserProfileScreen extends ConsumerWidget {
                 ),
                 SizedBox(width: AppConstants.spacing8),
                 Text(
-                  'User Ads',
+                  l10n.profileUserAds,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                 ),
                 const Spacer(),
                 Text(
-                  '${offers.length} items',
+                  '${offers.length} ${l10n.commonItems}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -373,7 +376,7 @@ class UserProfileScreen extends ConsumerWidget {
                     ),
                     SizedBox(height: AppConstants.spacing16),
                     Text(
-                      'No ads posted yet',
+                      l10n.profileNoAdsPostedYet,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: AppColors.textSecondary,
                           ),
@@ -389,7 +392,7 @@ class UserProfileScreen extends ConsumerWidget {
                     vertical: AppConstants.spacing8,
                   ),
                   child: AdCard(
-                    ad: _convertOfferToAdSmall(offer),
+                    ad: _convertOfferToAdSmall(offer, context),
                   ),
                 )),
         ],
@@ -397,7 +400,7 @@ class UserProfileScreen extends ConsumerWidget {
     );
   }
 
-  AdSmall _convertOfferToAdSmall(ProfileOffer offer) {
+  AdSmall _convertOfferToAdSmall(ProfileOffer offer, BuildContext context) {
     return AdSmall(
       id: offer.id.toString(),
       title: offer.name,
@@ -408,11 +411,12 @@ class UserProfileScreen extends ConsumerWidget {
       comments: 0,
       likes: 0,
       location: offer.regionName,
-      timeAgo: _formatTimeAgo(offer.createdAt),
+      timeAgo: _formatTimeAgo(offer.createdAt, context),
     );
   }
 
-  String _formatMemberSince(String dateString) {
+  String _formatMemberSince(String dateString, BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     try {
       final date = DateTime.parse(dateString);
       return '${date.day}/${date.month}/${date.year}';
@@ -421,7 +425,8 @@ class UserProfileScreen extends ConsumerWidget {
     }
   }
 
-  String _formatTimeAgo(String dateString) {
+  String _formatTimeAgo(String dateString, BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     try {
       final date = DateTime.parse(dateString);
       final now = DateTime.now();
@@ -429,24 +434,24 @@ class UserProfileScreen extends ConsumerWidget {
 
       if (difference.inDays > 365) {
         final years = (difference.inDays / 365).floor();
-        return '$years ${years == 1 ? 'year' : 'years'} ago';
+        return '$years ${years == 1 ? l10n.commonYear : l10n.commonYears} ${l10n.commonAgo}';
       } else if (difference.inDays > 30) {
         final months = (difference.inDays / 30).floor();
-        return '$months ${months == 1 ? 'month' : 'months'} ago';
+        return '$months ${months == 1 ? l10n.commonMonth : l10n.commonMonths} ${l10n.commonAgo}';
       } else if (difference.inDays > 7) {
         final weeks = (difference.inDays / 7).floor();
-        return '$weeks ${weeks == 1 ? 'week' : 'weeks'} ago';
+        return '$weeks ${weeks == 1 ? l10n.commonWeek : l10n.commonWeeks} ${l10n.commonAgo}';
       } else if (difference.inDays > 0) {
-        return '${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'} ago';
+        return '${difference.inDays} ${difference.inDays == 1 ? l10n.commonDay : l10n.commonDays} ${l10n.commonAgo}';
       } else if (difference.inHours > 0) {
-        return '${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'} ago';
+        return '${difference.inHours} ${difference.inHours == 1 ? l10n.commonHour : l10n.commonHours} ${l10n.commonAgo}';
       } else if (difference.inMinutes > 0) {
-        return '${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'} ago';
+        return '${difference.inMinutes} ${difference.inMinutes == 1 ? l10n.commonMinute : l10n.commonMinutes} ${l10n.commonAgo}';
       } else {
-        return 'Just now';
+        return l10n.commonJustNow;
       }
     } catch (e) {
-      return 'Recently';
+      return l10n.commonRecently;
     }
   }
 }

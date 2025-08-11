@@ -205,8 +205,9 @@ class NotificationsScreen extends ConsumerWidget {
     final diff = now.difference(date);
     final l10n = AppLocalizations.of(context);
     if (diff.inMinutes < 1) return l10n.commonJustNow;
-    if (diff.inMinutes < 60)
+    if (diff.inMinutes < 60) {
       return '${diff.inMinutes} ${l10n.commonMinutesAgo}';
+    }
     if (diff.inHours < 24) return '${diff.inHours} ${l10n.commonHoursAgo}';
     if (diff.inDays == 1) return l10n.commonYesterday;
     return '${diff.inDays} ${l10n.commonDaysAgo}';

@@ -5,9 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/services/api_service.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../models/ad_detail_response.dart';
 import '../../../auth/providers/auth_provider.dart';
-import '../../../profile/providers/followed_users_provider.dart';
 
 class UserProfileCard extends ConsumerWidget {
   final AdDetailResponse adDetails;
@@ -18,6 +18,7 @@ class UserProfileCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
     final isMyAd = authState.user?.id == adDetails.providerId;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AppConstants.spacing16),
       child: Row(
@@ -70,7 +71,7 @@ class UserProfileCard extends ConsumerWidget {
                     ),
                     const SizedBox(width: AppConstants.spacing4),
                     Text(
-                      'Member since ${DateTime.parse(adDetails.providerCreatedAt).year}',
+                      '${l10n.commonMemberSince} ${DateTime.parse(adDetails.providerCreatedAt).year}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: AppColors.textSecondary,
                           ),
@@ -96,7 +97,7 @@ class UserProfileCard extends ConsumerWidget {
                     );
                   },
                   child: Text(
-                    'View Profile',
+                    l10n.commonViewProfile,
                     style: TextStyle(
                       color: AppColors.primaryAccent,
                       fontWeight: FontWeight.w600,

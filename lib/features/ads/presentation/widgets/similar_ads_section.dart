@@ -62,7 +62,7 @@ class SimilarAdsSection extends ConsumerWidget {
                         'categoryId': categoryId.toString(),
                       });
                     },
-                    child: const Text('View All'),
+                    child: Text(l10n.commonViewAll),
                   ),
                 ],
               ),

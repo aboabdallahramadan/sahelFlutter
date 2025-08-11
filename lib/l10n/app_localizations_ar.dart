@@ -304,6 +304,81 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonChat => 'محادثة';
 
   @override
+  String get commonMemberSince => 'مشترك منذ';
+
+  @override
+  String get commonViewProfile => 'رؤية الملف';
+
+  @override
+  String get commonReply => 'رد';
+
+  @override
+  String get commonReplies => 'الردود';
+
+  @override
+  String get commonAddReply => 'إضافة رد';
+
+  @override
+  String get commonFailedToLoadReplies => 'فشل تحميل الردود';
+
+  @override
+  String get commonLoadMoreReplies => 'تحميل المزيد من الردود';
+
+  @override
+  String get commonItems => 'عناصر';
+
+  @override
+  String get commonYear => 'سنة';
+
+  @override
+  String get commonYears => 'سنوات';
+
+  @override
+  String get commonAgo => 'مضت';
+
+  @override
+  String get commonMonth => 'شهر';
+
+  @override
+  String get commonMonths => 'أشهر';
+
+  @override
+  String get commonWeek => 'أسبوع';
+
+  @override
+  String get commonWeeks => 'أسابيع';
+
+  @override
+  String get commonDay => 'يوم';
+
+  @override
+  String get commonDays => 'أيام';
+
+  @override
+  String get commonHour => 'ساعة';
+
+  @override
+  String get commonHours => 'ساعات';
+
+  @override
+  String get commonMinute => 'دقيقة';
+
+  @override
+  String get commonMinutes => 'دقائق';
+
+  @override
+  String get commonRecently => 'مؤخراً';
+
+  @override
+  String get commonMain => 'الرئيسية';
+
+  @override
+  String get commonAdDetails => 'تفاصيل الاعلان';
+
+  @override
+  String get commonPostAd => 'نشر الاعلان';
+
+  @override
   String get footerDescription =>
       'موقع إعلانات سهل البيع والشراء الأعلى في الجودة. إضافة إعلانات مجانية. شراء وبيع سيارات مستعملة، شقق للإيجار، البحث عن وظائف والمزيد من العناصر المنزلية والجودة في سهل';
 
@@ -561,5 +636,36 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileHelp => 'المساعدة والدعم';
 
   @override
-  String get profileFollowing => 'اشخاص اتابعهم';
+  String get profileFollowing => 'يتابع';
+
+  @override
+  String get profileUserProfile => 'الملف الشخصي للمستخدم';
+
+  @override
+  String get profileUserNotFound => 'المستخدم غير موجود';
+
+  @override
+  String get profileErrorLoadingProfile => 'خطأ في تحميل الملف الشخصي';
+
+  @override
+  String get profileUnfollowUser => 'إلغاء متابعة المستخدم';
+
+  @override
+  String get profileAreYouSureYouWantToUnfollow =>
+      'هل أنت متأكد أنك تريد إلغاء متابعة هذا المستخدم؟';
+
+  @override
+  String get profileUnfollow => 'إلغاء المتابعة';
+
+  @override
+  String get profileFollowers => 'المتابعون';
+
+  @override
+  String get profileUserAds => 'إعلانات المستخدم';
+
+  @override
+  String get profileNoAdsPostedYet => 'لم يتم نشر أي إعلانات حتى الآن';
+
+  @override
+  String get profileFollow => 'متابعة';
 }

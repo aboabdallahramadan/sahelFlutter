@@ -250,7 +250,7 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
       commentsProvider(widget.offerId)
           .select((state) => state.replyingToCommentId == comment.id),
     );
-
+    final l10n = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: AppConstants.spacing16),
       child: Column(
@@ -330,7 +330,7 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
                           child: Text(
-                            isReplying ? 'Cancel' : 'Reply',
+                            isReplying ? l10n.commonCancel : l10n.commonReply,
                             style: TextStyle(
                               color: AppColors.primaryAccent,
                               fontSize: 12,
@@ -366,7 +366,7 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  '${comment.repliesCount} ${comment.repliesCount == 1 ? 'reply' : 'replies'}',
+                                  '${comment.repliesCount} ${comment.repliesCount == 1 ? l10n.commonReply : l10n.commonReplies}',
                                   style: TextStyle(
                                     color: AppColors.primaryAccent,
                                     fontSize: 12,
@@ -399,7 +399,7 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
                       enabled: !_isSubmitting,
                       autofocus: true,
                       decoration: InputDecoration(
-                        hintText: 'Write a reply...',
+                        hintText: l10n.commonAddReply,
                         filled: true,
                         fillColor: AppColors.backgroundGray,
                         border: OutlineInputBorder(
@@ -448,7 +448,7 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
 
   Widget _buildRepliesSection(int commentId) {
     final repliesState = ref.watch(repliesProvider(commentId));
-
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.only(
         left: 52, // Avatar width + spacing
@@ -469,7 +469,7 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
             Padding(
               padding: const EdgeInsets.all(AppConstants.spacing8),
               child: Text(
-                'Failed to load replies',
+                l10n.commonFailedToLoadReplies,
                 style: TextStyle(
                   color: AppColors.error,
                   fontSize: 12,
@@ -504,7 +504,7 @@ class _CommentsSectionState extends ConsumerState<CommentsSection> {
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       child: Text(
-                        'Load more replies',
+                        l10n.commonLoadMoreReplies,
                         style: TextStyle(
                           color: AppColors.primaryAccent,
                           fontSize: 12,

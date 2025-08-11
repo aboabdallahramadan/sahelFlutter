@@ -681,6 +681,156 @@ abstract class AppLocalizations {
   /// **'Chat'**
   String get commonChat;
 
+  /// No description provided for @commonMemberSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Member since'**
+  String get commonMemberSince;
+
+  /// No description provided for @commonViewProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View Profile'**
+  String get commonViewProfile;
+
+  /// No description provided for @commonReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get commonReply;
+
+  /// No description provided for @commonReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'Replies'**
+  String get commonReplies;
+
+  /// No description provided for @commonAddReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Reply'**
+  String get commonAddReply;
+
+  /// No description provided for @commonFailedToLoadReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load replies'**
+  String get commonFailedToLoadReplies;
+
+  /// No description provided for @commonLoadMoreReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more replies'**
+  String get commonLoadMoreReplies;
+
+  /// No description provided for @commonItems.
+  ///
+  /// In en, this message translates to:
+  /// **'items'**
+  String get commonItems;
+
+  /// No description provided for @commonYear.
+  ///
+  /// In en, this message translates to:
+  /// **'year'**
+  String get commonYear;
+
+  /// No description provided for @commonYears.
+  ///
+  /// In en, this message translates to:
+  /// **'years'**
+  String get commonYears;
+
+  /// No description provided for @commonAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'ago'**
+  String get commonAgo;
+
+  /// No description provided for @commonMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'month'**
+  String get commonMonth;
+
+  /// No description provided for @commonMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'months'**
+  String get commonMonths;
+
+  /// No description provided for @commonWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'week'**
+  String get commonWeek;
+
+  /// No description provided for @commonWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'weeks'**
+  String get commonWeeks;
+
+  /// No description provided for @commonDay.
+  ///
+  /// In en, this message translates to:
+  /// **'day'**
+  String get commonDay;
+
+  /// No description provided for @commonDays.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get commonDays;
+
+  /// No description provided for @commonHour.
+  ///
+  /// In en, this message translates to:
+  /// **'hour'**
+  String get commonHour;
+
+  /// No description provided for @commonHours.
+  ///
+  /// In en, this message translates to:
+  /// **'hours'**
+  String get commonHours;
+
+  /// No description provided for @commonMinute.
+  ///
+  /// In en, this message translates to:
+  /// **'minute'**
+  String get commonMinute;
+
+  /// No description provided for @commonMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'minutes'**
+  String get commonMinutes;
+
+  /// No description provided for @commonRecently.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently'**
+  String get commonRecently;
+
+  /// No description provided for @commonMain.
+  ///
+  /// In en, this message translates to:
+  /// **'Main'**
+  String get commonMain;
+
+  /// No description provided for @commonAdDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Ad Details'**
+  String get commonAdDetails;
+
+  /// No description provided for @commonPostAd.
+  ///
+  /// In en, this message translates to:
+  /// **'Post Ad'**
+  String get commonPostAd;
+
   /// No description provided for @footerDescription.
   ///
   /// In en, this message translates to:
@@ -1178,6 +1328,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Following'**
   String get profileFollowing;
+
+  /// No description provided for @profileUserProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'User Profile'**
+  String get profileUserProfile;
+
+  /// No description provided for @profileUserNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'User not found'**
+  String get profileUserNotFound;
+
+  /// No description provided for @profileErrorLoadingProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading profile'**
+  String get profileErrorLoadingProfile;
+
+  /// No description provided for @profileUnfollowUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfollow User'**
+  String get profileUnfollowUser;
+
+  /// No description provided for @profileAreYouSureYouWantToUnfollow.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to unfollow this user?'**
+  String get profileAreYouSureYouWantToUnfollow;
+
+  /// No description provided for @profileUnfollow.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfollow'**
+  String get profileUnfollow;
+
+  /// No description provided for @profileFollowers.
+  ///
+  /// In en, this message translates to:
+  /// **'Followers'**
+  String get profileFollowers;
+
+  /// No description provided for @profileUserAds.
+  ///
+  /// In en, this message translates to:
+  /// **'User Ads'**
+  String get profileUserAds;
+
+  /// No description provided for @profileNoAdsPostedYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No ads posted yet'**
+  String get profileNoAdsPostedYet;
+
+  /// No description provided for @profileFollow.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow'**
+  String get profileFollow;
 }
 
 class _AppLocalizationsDelegate
