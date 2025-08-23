@@ -380,6 +380,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonPostAd => 'Post Ad';
 
   @override
+  String get commonErrorLoadingFollowedUsers => 'Error loading followed users';
+
+  @override
+  String get commonTryAgain => 'Try Again';
+
+  @override
+  String get commonNotFollowingAnyone => 'Not following anyone';
+
+  @override
+  String get commonStartFollowingOtherUsers => 'Start following other users';
+
+  @override
+  String get commonUnfollowUser => 'Unfollow User';
+
+  @override
+  String get commonAreYouSureYouWantToUnfollowThisUser =>
+      'Are you sure you want to unfollow this user?';
+
+  @override
+  String get commonUnfollow => 'Unfollow';
+
+  @override
   String get footerDescription =>
       'Top Classified Site in Gulf. Post free ads. Buy and sell used cars, apartment for rent, search jobs and more cheap quality items in Gulf';
 

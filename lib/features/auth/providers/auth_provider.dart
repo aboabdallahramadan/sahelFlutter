@@ -37,6 +37,23 @@ class AuthNotifier extends StateNotifier<AuthState> {
   // Check initial auth status
   Future<void> _checkAuthStatus() async {
     final isAuth = await _authService.isAuthenticated();
+    if (isAuth) {
+      // Try to restore user data from storage
+      final userData = await _storageService.getUserData();
+      if (userData != null) {
+        try {
+          final user = UserModel.fromJson(userData);
+          state = state.copyWith(
+            isAuthenticated: true,
+            user: user,
+          );
+          return;
+        } catch (e) {
+          // If parsing fails, just set authenticated without user data
+          print('Error parsing stored user data: $e');
+        }
+      }
+    }
     state = state.copyWith(isAuthenticated: isAuth);
   }
 

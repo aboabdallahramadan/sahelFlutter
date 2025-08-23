@@ -218,6 +218,34 @@ class HomeScreen extends ConsumerWidget {
                 context.goNamed('contact');
               },
             ),
+            ListTile(
+              leading: Icon(
+                Icons.privacy_tip,
+                size: AppConstants.iconSizeMediumR,
+              ),
+              title: Text(
+                l10n.profilePrivacy,
+                style: TextStyle(fontSize: 16.sp),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                context.goNamed('privacy');
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.description,
+                size: AppConstants.iconSizeMediumR,
+              ),
+              title: Text(
+                l10n.profileTerms,
+                style: TextStyle(fontSize: 16.sp),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                context.goNamed('terms');
+              },
+            ),
             const Divider(),
             if (authState.isAuthenticated)
               ListTile(

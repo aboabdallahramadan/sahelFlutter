@@ -237,24 +237,6 @@ class ProfileScreen extends ConsumerWidget {
                       );
                     },
                   ),
-                  const Divider(height: 1),
-                  _buildMenuItem(
-                    context: context,
-                    icon: Icons.privacy_tip,
-                    title: l10n.profilePrivacy,
-                    onTap: () {
-                      context.goNamed('privacy');
-                    },
-                  ),
-                  const Divider(height: 1),
-                  _buildMenuItem(
-                    context: context,
-                    icon: Icons.description,
-                    title: l10n.profileTerms,
-                    onTap: () {
-                      context.goNamed('terms');
-                    },
-                  ),
                 ],
               ),
             ),

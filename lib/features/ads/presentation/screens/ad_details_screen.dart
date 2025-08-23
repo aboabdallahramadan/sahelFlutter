@@ -13,6 +13,8 @@ import '../widgets/comments_section.dart';
 import '../../providers/ad_details_provider.dart';
 import '../../../auth/providers/auth_provider.dart';
 import '../../../chat/services/chat_service.dart';
+import '../../../chat/presentation/providers/chat_provider.dart';
+import '../../../chat/data/models/chat_list_response.dart';
 
 class AdDetailsScreen extends ConsumerWidget {
   final String adId;
@@ -43,6 +45,18 @@ class AdDetailsScreen extends ConsumerWidget {
       final response = await chatService.createOrGetChat(providerId);
 
       if (response.success && response.data != null && context.mounted) {
+        // Add the new chat to the chat list
+        final chatListItem = ChatListItem(
+          id: response.data!.id,
+          user: ChatUserInfo(
+            id: response.data!.user.id,
+            name: response.data!.user.name,
+            phoneNumber: response.data!.user.phoneNumber,
+            profilePhotoUrl: response.data!.user.profilePhotoUrl,
+          ),
+        );
+        ref.read(chatListProvider.notifier).addOrUpdateChat(chatListItem);
+
         context.goNamed('chat', pathParameters: {
           'chatId': response.data!.id.toString(),
         });

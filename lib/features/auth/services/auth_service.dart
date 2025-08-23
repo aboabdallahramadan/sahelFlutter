@@ -97,8 +97,8 @@ class AuthService {
       if (apiResponse.success && apiResponse.data != null) {
         // Save token and user data
         await _storageService.saveToken(apiResponse.data!.token);
-        await _storageService
-            .saveUserData(apiResponse.data!.user.toJson().toString());
+        // Save user data as proper JSON
+        await _storageService.saveUserData(apiResponse.data!.user.toJson());
       }
 
       return apiResponse;

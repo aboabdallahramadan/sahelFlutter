@@ -132,6 +132,13 @@
   "commonMain": "Main",
   "commonAdDetails": "Ad Details",
   "commonPostAd": "Post Ad",
+  "commonErrorLoadingFollowedUsers": "Error loading followed users",
+  "commonTryAgain": "Try Again",
+  "commonNotFollowingAnyone": "Not following anyone",
+  "commonStartFollowingOtherUsers": "Start following other users",
+  "commonUnfollowUser": "Unfollow User",
+  "commonAreYouSureYouWantToUnfollowThisUser": "Are you sure you want to unfollow this user?",
+  "commonUnfollow": "Unfollow",
 
 
   "@footer": {"description": "Footer strings"},

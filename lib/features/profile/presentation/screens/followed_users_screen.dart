@@ -18,7 +18,7 @@ class FollowedUsersScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     // Redirect to login if not authenticated
     if (!authState.isAuthenticated) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -45,8 +45,8 @@ class FollowedUsersScreen extends ConsumerWidget {
               ref.invalidate(userProfileProvider);
             },
             child: users.isEmpty
-                ? _buildEmptyState(context)
-                : _buildUsersList(users, ref, context),
+                ? _buildEmptyState(context, l10n)
+                : _buildUsersList(users, ref, context, l10n),
           );
         },
         loading: () => const Center(
@@ -72,7 +72,7 @@ class FollowedUsersScreen extends ConsumerWidget {
                       ),
                       SizedBox(height: AppConstants.spacing16),
                       Text(
-                        'Error loading followed users',
+                        l10n.commonErrorLoadingFollowedUsers,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       SizedBox(height: AppConstants.spacing8),
@@ -86,7 +86,7 @@ class FollowedUsersScreen extends ConsumerWidget {
                       SizedBox(height: AppConstants.spacing16),
                       ElevatedButton(
                         onPressed: () => ref.invalidate(userProfileProvider),
-                        child: const Text('Try Again'),
+                        child: Text(l10n.commonTryAgain),
                       ),
                     ],
                   ),
@@ -99,7 +99,7 @@ class FollowedUsersScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
       children: [
@@ -118,14 +118,14 @@ class FollowedUsersScreen extends ConsumerWidget {
                   ),
                   SizedBox(height: AppConstants.spacing24),
                   Text(
-                    'Not Following Anyone',
+                    l10n.commonNotFollowingAnyone,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                   ),
                   SizedBox(height: AppConstants.spacing8),
                   Text(
-                    'Start following other users to see their latest ads and updates here.',
+                    l10n.commonStartFollowingOtherUsers,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
                         ),
@@ -140,8 +140,8 @@ class FollowedUsersScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildUsersList(
-      List<FollowedUser> users, WidgetRef ref, BuildContext context) {
+  Widget _buildUsersList(List<FollowedUser> users, WidgetRef ref,
+      BuildContext context, AppLocalizations l10n) {
     return ListView.separated(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.all(AppConstants.spacing16),
@@ -150,13 +150,13 @@ class FollowedUsersScreen extends ConsumerWidget {
           SizedBox(height: AppConstants.spacing12),
       itemBuilder: (context, index) {
         final user = users[index];
-        return _buildUserCard(user, ref, context);
+        return _buildUserCard(user, ref, context, l10n);
       },
     );
   }
 
-  Widget _buildUserCard(
-      FollowedUser user, WidgetRef ref, BuildContext context) {
+  Widget _buildUserCard(FollowedUser user, WidgetRef ref, BuildContext context,
+      AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.backgroundWhite,
@@ -232,7 +232,7 @@ class FollowedUsersScreen extends ConsumerWidget {
                       );
                     },
                     icon: const Icon(Icons.person_outline),
-                    tooltip: 'View Profile',
+                    tooltip: l10n.commonViewProfile,
                     color: AppColors.primaryAccent,
                   ),
                 ),
@@ -254,11 +254,11 @@ class FollowedUsersScreen extends ConsumerWidget {
                               context: context,
                               builder: (context) => AlertDialog(
                                 title: Text(
-                                  'Unfollow User',
+                                  l10n.commonUnfollowUser,
                                   style: Theme.of(context).textTheme.titleLarge,
                                 ),
                                 content: Text(
-                                  'Are you sure you want to unfollow ${user.name}?',
+                                  l10n.commonAreYouSureYouWantToUnfollowThisUser,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 actions: [
@@ -266,7 +266,7 @@ class FollowedUsersScreen extends ConsumerWidget {
                                     onPressed: () =>
                                         Navigator.of(context).pop(false),
                                     child: Text(
-                                      'Cancel',
+                                      l10n.commonCancel,
                                       style: TextStyle(
                                           color: AppColors.textSecondary),
                                     ),
@@ -278,7 +278,7 @@ class FollowedUsersScreen extends ConsumerWidget {
                                       backgroundColor: AppColors.error,
                                       foregroundColor: Colors.white,
                                     ),
-                                    child: const Text('Unfollow'),
+                                    child: Text(l10n.commonUnfollow),
                                   ),
                                 ],
                               ),
@@ -289,7 +289,7 @@ class FollowedUsersScreen extends ConsumerWidget {
                             }
                           },
                           icon: const Icon(Icons.person_remove),
-                          tooltip: 'Unfollow',
+                          tooltip: l10n.commonUnfollow,
                           color: AppColors.error,
                         ),
                       ),
@@ -310,7 +310,7 @@ class FollowedUsersScreen extends ConsumerWidget {
                             await toggleFollowUser(ref, user.id);
                           },
                           icon: const Icon(Icons.person_remove),
-                          tooltip: 'Unfollow',
+                          tooltip: l10n.commonUnfollow,
                           color: AppColors.error,
                         ),
                       ),

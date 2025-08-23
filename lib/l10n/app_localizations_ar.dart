@@ -379,6 +379,29 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonPostAd => 'نشر الاعلان';
 
   @override
+  String get commonErrorLoadingFollowedUsers =>
+      'خطأ في تحميل المستخدمين المتابعين';
+
+  @override
+  String get commonTryAgain => 'حاول مرة أخرى';
+
+  @override
+  String get commonNotFollowingAnyone => 'لا تتابع أي شخص';
+
+  @override
+  String get commonStartFollowingOtherUsers => 'ابدأ بمتابعة مستخدمين آخرين';
+
+  @override
+  String get commonUnfollowUser => 'إلغاء متابعة المستخدم';
+
+  @override
+  String get commonAreYouSureYouWantToUnfollowThisUser =>
+      'هل أنت متأكد أنك تريد إلغاء متابعة هذا المستخدم؟';
+
+  @override
+  String get commonUnfollow => 'إلغاء المتابعة';
+
+  @override
   String get footerDescription =>
       'موقع إعلانات سهل البيع والشراء الأعلى في الجودة. إضافة إعلانات مجانية. شراء وبيع سيارات مستعملة، شقق للإيجار، البحث عن وظائف والمزيد من العناصر المنزلية والجودة في سهل';
 

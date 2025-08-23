@@ -51,7 +51,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           id: _chatId,
           user: const ChatUserInfo(
             id: 0,
-            name: 'Unknown',
+            name: 'Loading...',
             phoneNumber: '',
             profilePhotoUrl: '',
           )),
@@ -59,6 +59,30 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     setState(() {
       _otherUser = chat;
     });
+
+    // If chat not found in list, try to load the chat list
+    if (chat.user.id == 0) {
+      ref.read(chatListProvider.notifier).loadChats().then((_) {
+        // Try to find the chat again after loading
+        final updatedChatListState = ref.read(chatListProvider);
+        final updatedChat = updatedChatListState.chats.firstWhere(
+          (chat) => chat.id == _chatId,
+          orElse: () => ChatListItem(
+              id: _chatId,
+              user: const ChatUserInfo(
+                id: 0,
+                name: 'Unknown User',
+                phoneNumber: '',
+                profilePhotoUrl: '',
+              )),
+        );
+        if (mounted) {
+          setState(() {
+            _otherUser = updatedChat;
+          });
+        }
+      });
+    }
   }
 
   Future<void> _loadMessages() async {

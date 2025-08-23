@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -5,9 +6,9 @@ class SecureStorageService {
   static const _tokenKey = 'auth_token';
   static const _userIdKey = 'user_id';
   static const _userDataKey = 'user_data';
-  
+
   final FlutterSecureStorage _storage;
-  
+
   SecureStorageService({FlutterSecureStorage? storage})
       : _storage = storage ?? const FlutterSecureStorage();
 
@@ -39,12 +40,20 @@ class SecureStorageService {
   }
 
   // User data management
-  Future<void> saveUserData(String userData) async {
-    await _storage.write(key: _userDataKey, value: userData);
+  Future<void> saveUserData(Map<String, dynamic> userData) async {
+    await _storage.write(key: _userDataKey, value: jsonEncode(userData));
   }
 
-  Future<String?> getUserData() async {
-    return await _storage.read(key: _userDataKey);
+  Future<Map<String, dynamic>?> getUserData() async {
+    final data = await _storage.read(key: _userDataKey);
+    if (data != null) {
+      try {
+        return jsonDecode(data) as Map<String, dynamic>;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
   }
 
   Future<void> deleteUserData() async {
@@ -55,7 +64,7 @@ class SecureStorageService {
   Future<void> clearAll() async {
     await _storage.deleteAll();
   }
-  
+
   // Check if user is authenticated
   Future<bool> isAuthenticated() async {
     final token = await getToken();

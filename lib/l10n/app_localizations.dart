@@ -831,6 +831,48 @@ abstract class AppLocalizations {
   /// **'Post Ad'**
   String get commonPostAd;
 
+  /// No description provided for @commonErrorLoadingFollowedUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading followed users'**
+  String get commonErrorLoadingFollowedUsers;
+
+  /// No description provided for @commonTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get commonTryAgain;
+
+  /// No description provided for @commonNotFollowingAnyone.
+  ///
+  /// In en, this message translates to:
+  /// **'Not following anyone'**
+  String get commonNotFollowingAnyone;
+
+  /// No description provided for @commonStartFollowingOtherUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Start following other users'**
+  String get commonStartFollowingOtherUsers;
+
+  /// No description provided for @commonUnfollowUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfollow User'**
+  String get commonUnfollowUser;
+
+  /// No description provided for @commonAreYouSureYouWantToUnfollowThisUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to unfollow this user?'**
+  String get commonAreYouSureYouWantToUnfollowThisUser;
+
+  /// No description provided for @commonUnfollow.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfollow'**
+  String get commonUnfollow;
+
   /// No description provided for @footerDescription.
   ///
   /// In en, this message translates to:

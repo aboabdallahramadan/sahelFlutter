@@ -82,6 +82,21 @@ class ChatListNotifier extends StateNotifier<ChatListState> {
   void clearError() {
     state = state.copyWith(error: null);
   }
+
+  void addOrUpdateChat(ChatListItem chat) {
+    // Check if chat already exists
+    final existingIndex = state.chats.indexWhere((c) => c.id == chat.id);
+
+    if (existingIndex != -1) {
+      // Update existing chat
+      final updatedChats = List<ChatListItem>.from(state.chats);
+      updatedChats[existingIndex] = chat;
+      state = state.copyWith(chats: updatedChats);
+    } else {
+      // Add new chat at the beginning
+      state = state.copyWith(chats: [chat, ...state.chats]);
+    }
+  }
 }
 
 // State for chat messages
